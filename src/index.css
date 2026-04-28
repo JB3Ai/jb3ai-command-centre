@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   OS³ Command Centre — Brand Pack v6
+   Matte-black UI · cyan ≤15% · gold money/exposure only · no gradients/glow
+   ============================================================================ */
+@layer base {
+  :root {
+    /* OS³ runs dark-by-default. Light vars kept only so shadcn/ui doesn't break. */
+    --background: 218 25% 5%;          /* matte #0A0C10 */
+    --foreground: 215 20% 92%;         /* ink #E8ECF1 */
+    --card:        217 21% 7%;         /* graphite #0E1116 */
+    --card-foreground: 215 20% 92%;
+    --popover:     217 21% 7%;
+    --popover-foreground: 215 20% 92%;
+    --primary:     186 100% 58%;       /* cyan #2AF1FF */
+    --primary-foreground: 218 25% 5%;
+    --secondary:   216 19% 11%;        /* steel #151A22 */
+    --secondary-foreground: 215 20% 92%;
+    --muted:       216 19% 11%;
+    --muted-foreground: 220 9% 46%;    /* ink-mute */
+    --accent:      216 19% 11%;
+    --accent-foreground: 215 20% 92%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 215 20% 92%;
+    --border:      214 18% 16%;        /* edge #1E2530 */
+    --input:       214 18% 16%;
+    --ring:        186 100% 58%;
+    --radius:      0.5rem;
+  }
+  /* Mirror :root onto .dark so the .dark class no-ops (we are always dark). */
+  .dark { color-scheme: dark; }
+}
+
+@layer base {
+  *  { @apply border-border; }
+  html, body, #root { @apply h-full; }
+  body {
+    @apply bg-matte text-ink antialiased;
+    font-family: "Inter", "Satoshi", system-ui, sans-serif;
+    font-feature-settings: "ss01", "cv11";
+  }
+  /* Orbitron is for HEADLINES and big metric numbers only — apply explicitly via .font-display. */
+}
+
+/* Custom scrollbar — slim, on-brand */
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar          { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-track    { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb    { background: #1E2530; border-radius: 3px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #2A3340; }
+
+  /* Status dot helpers — flat, no glow */
+  .dot-ok   { @apply h-1.5 w-1.5 rounded-full bg-emerald-500; }
+  .dot-warn { @apply h-1.5 w-1.5 rounded-full bg-amber-500; }
+  .dot-err  { @apply h-1.5 w-1.5 rounded-full bg-red-500; }
+  .dot-idle { @apply h-1.5 w-1.5 rounded-full bg-ink-ghost; }
+}

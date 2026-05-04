@@ -1,19 +1,275 @@
-import { MessageSquare } from "lucide-react";
-import { PlaceholderPage } from "@/components/PlaceholderPage";
+import { useEffect, useState, useMemo } from "react";
+import { supabase } from "@/lib/supabase";
+import { MessageSquare, AlertCircle, Check, ChevronDown } from "lucide-react";
+
+type Direction = "inbound" | "outbound";
+
+interface WaMessage {
+  id: string;
+  phone_number: string;
+  contact_name: string | null;
+  direction: Direction;
+  body: string;
+  created_at: string;
+  responded: boolean;
+  needs_reply: boolean;
+  is_archived: boolean;
+}
+
+interface Thread {
+  phone: string;
+  name: string;
+  messages: WaMessage[];
+  needsReply: boolean;
+  lastAt: string;
+}
+
+function relativeTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}d ago`;
+  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
+function formatTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+}
+
+function ThreadRow({
+  thread,
+  selected,
+  onClick,
+}: {
+  thread: Thread;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  const last = thread.messages[thread.messages.length - 1];
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full text-left px-4 py-3 border-b border-zinc-800 transition-colors ${
+        selected ? "bg-cyan-400/5 border-l-2 border-l-cyan-400" : "hover:bg-zinc-800/50"
+      }`}
+    >
+      <div className="flex items-center justify-between gap-2 mb-0.5">
+        <span className="font-medium text-white text-sm truncate">{thread.name}</span>
+        <span className="text-xs text-zinc-500 shrink-0">{relativeTime(thread.lastAt)}</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <p className="text-xs text-zinc-500 truncate flex-1">
+          {last.direction === "outbound" && <span className="text-zinc-600">You: </span>}
+          {last.body}
+        </p>
+        {thread.needsReply && (
+          <AlertCircle className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
+        )}
+      </div>
+    </button>
+  );
+}
+
+function MessageBubble({ msg }: { msg: WaMessage }) {
+  const isOut = msg.direction === "outbound";
+  return (
+    <div className={`flex ${isOut ? "justify-end" : "justify-start"} mb-2`}>
+      <div
+        className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+          isOut
+            ? "bg-cyan-400/15 text-white rounded-br-sm"
+            : "bg-zinc-800 text-zinc-200 rounded-bl-sm"
+        }`}
+      >
+        <p>{msg.body}</p>
+        <p className={`text-xs mt-1 ${isOut ? "text-cyan-400/60 text-right" : "text-zinc-500"}`}>
+          {formatTime(msg.created_at)}
+          {isOut && msg.responded && <Check className="inline w-3 h-3 ml-1" />}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function WhatsAppPage() {
+  const [messages, setMessages] = useState<WaMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedPhone, setSelectedPhone] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | "needs_reply" | "inbound">("all");
+  const [digest, setDigest] = useState<string | null>(null);
+  const [showDigest, setShowDigest] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      const { data } = await supabase
+        .from("hub_whatsapp_messages")
+        .select("*")
+        .eq("is_archived", false)
+        .order("created_at", { ascending: false })
+        .limit(500);
+      setMessages(data ?? []);
+      setLoading(false);
+
+      // Load today's digest from hub_notes_dump
+      const today = new Date().toISOString().slice(0, 10);
+      const { data: note } = await supabase
+        .from("hub_notes_dump")
+        .select("body")
+        .eq("source", "kestra-whatsapp")
+        .gte("created_at", `${today}T00:00:00Z`)
+        .maybeSingle();
+      if (note) setDigest(note.body);
+    }
+    load();
+  }, []);
+
+  // Group messages into threads by phone number
+  const threads = useMemo((): Thread[] => {
+    const map = new Map<string, WaMessage[]>();
+    for (const msg of [...messages].reverse()) {
+      const arr = map.get(msg.phone_number) ?? [];
+      arr.push(msg);
+      map.set(msg.phone_number, arr);
+    }
+    return Array.from(map.entries())
+      .map(([phone, msgs]) => ({
+        phone,
+        name: msgs[msgs.length - 1].contact_name ?? phone,
+        messages: msgs,
+        needsReply: msgs.some(m => m.needs_reply),
+        lastAt: msgs[msgs.length - 1].created_at,
+      }))
+      .sort((a, b) => new Date(b.lastAt).getTime() - new Date(a.lastAt).getTime());
+  }, [messages]);
+
+  const visibleThreads = useMemo(() => {
+    if (filter === "needs_reply") return threads.filter(t => t.needsReply);
+    if (filter === "inbound") return threads.filter(t =>
+      t.messages[t.messages.length - 1].direction === "inbound");
+    return threads;
+  }, [threads, filter]);
+
+  const activeThread = selectedPhone
+    ? threads.find(t => t.phone === selectedPhone) ?? null
+    : null;
+
+  async function markReplied(phone: string) {
+    setMessages(prev => prev.map(m =>
+      m.phone_number === phone ? { ...m, needs_reply: false, responded: true } : m));
+    await supabase
+      .from("hub_whatsapp_messages")
+      .update({ needs_reply: false, responded: true })
+      .eq("phone_number", phone)
+      .eq("needs_reply", true);
+  }
+
+  const needsReplyCount = threads.filter(t => t.needsReply).length;
+
   return (
-    <PlaceholderPage
-      icon={MessageSquare}
-      title="WhatsApp"
-      description="Read-only mirror of the WhatsApp bridge — Go bridge + Python MCP push messages into hub_whatsapp_messages. Bridge dependency: start-whatsapp-bridge.bat must be running on the Windows PC."
-      phase="Phase 3"
-      upcoming={[
-        "Threaded conversation view by JID",
-        "Flag/star messages for follow-up",
-        "Outbound draft → bridge send",
-        "Media attachment indicator",
-      ]}
-    />
+    <div className="flex h-full overflow-hidden">
+      {/* Left: thread list */}
+      <div className="flex flex-col w-72 shrink-0 border-r border-zinc-800 overflow-hidden">
+        {/* Header */}
+        <div className="p-4 border-b border-zinc-800">
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-lg font-bold text-white" style={{ fontFamily: "Orbitron, sans-serif" }}>
+              WhatsApp
+            </h1>
+            {needsReplyCount > 0 && (
+              <span className="text-xs bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 px-2 py-0.5 rounded-full">
+                {needsReplyCount} pending
+              </span>
+            )}
+          </div>
+          {/* Filters */}
+          <div className="flex gap-1">
+            {(["all", "needs_reply", "inbound"] as const).map(f => (
+              <button key={f} onClick={() => setFilter(f)}
+                className={`flex-1 text-xs py-1 rounded border transition-colors ${
+                  filter === f
+                    ? "border-cyan-400/40 bg-cyan-400/10 text-cyan-400"
+                    : "border-zinc-700 text-zinc-500 hover:text-zinc-300"
+                }`}>
+                {f === "all" ? `All ${threads.length}` : f === "needs_reply" ? "Reply" : "Inbound"}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Digest banner */}
+        {digest && (
+          <div className="border-b border-zinc-800">
+            <button onClick={() => setShowDigest(v => !v)}
+              className="w-full flex items-center justify-between px-4 py-2 text-xs text-zinc-400 hover:text-white transition-colors">
+              <span className="flex items-center gap-1.5">
+                <MessageSquare className="w-3 h-3 text-cyan-400" />
+                Today's digest
+              </span>
+              <ChevronDown className={`w-3 h-3 transition-transform ${showDigest ? "rotate-180" : ""}`} />
+            </button>
+            {showDigest && (
+              <div className="px-4 pb-3">
+                <p className="text-xs text-zinc-400 leading-relaxed">{digest}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Thread list */}
+        <div className="flex-1 overflow-y-auto">
+          {loading ? (
+            <p className="text-zinc-500 text-sm text-center mt-8">Loading…</p>
+          ) : visibleThreads.length === 0 ? (
+            <div className="text-center mt-8 px-4">
+              <p className="text-zinc-500 text-sm">No conversations</p>
+              <p className="text-zinc-600 text-xs mt-1">Start the WhatsApp bridge to sync messages</p>
+            </div>
+          ) : (
+            visibleThreads.map(t => (
+              <ThreadRow key={t.phone} thread={t}
+                selected={selectedPhone === t.phone}
+                onClick={() => setSelectedPhone(t.phone)} />
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Right: message thread */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {!activeThread ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <MessageSquare className="w-12 h-12 text-zinc-700 mb-3" />
+            <p className="text-zinc-500">Select a conversation</p>
+            <p className="text-zinc-600 text-xs mt-1">{threads.length} threads loaded</p>
+          </div>
+        ) : (
+          <>
+            {/* Thread header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
+              <div>
+                <p className="font-semibold text-white">{activeThread.name}</p>
+                <p className="text-xs text-zinc-500">{activeThread.phone} · {activeThread.messages.length} messages</p>
+              </div>
+              {activeThread.needsReply && (
+                <button onClick={() => markReplied(activeThread.phone)}
+                  className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded border border-yellow-400/30 bg-yellow-400/10 text-yellow-400 hover:bg-yellow-400/20 transition-colors">
+                  <Check className="w-3.5 h-3.5" /> Mark replied
+                </button>
+              )}
+            </div>
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto px-6 py-4">
+              {activeThread.messages.map(msg => (
+                <MessageBubble key={msg.id} msg={msg} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

@@ -81,7 +81,7 @@ function parseDate(s: string): string {
   return s;
 }
 
-function parseBankZeroCSV(text: string, filename: string): ParsedRow[] {
+function parseBankZeroCSV(text: string, _filename: string): ParsedRow[] {
   const rows = parseCsv(text);
   if (rows.length < 2) return [];
   const header = rows[0].map(h => h.toLowerCase().replace(/\s+/g, "_"));

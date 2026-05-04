@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./index.css";
 
 import { AuthProvider } from "@/lib/auth-context";
@@ -42,6 +43,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
+        <SpeedInsights />
         <Routes>
           {/* Public routes — outside the Layout (no chrome) */}
           <Route path="/login" element={<LoginPage />} />

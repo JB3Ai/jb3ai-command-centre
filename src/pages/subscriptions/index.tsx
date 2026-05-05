@@ -53,16 +53,11 @@ function fmtDate(iso?: string | null): string {
   }
 }
 
-// rough monthly estimate from cost + cycle string
+// monthly ZAR already stored in DB; billing_cycle used only as fallback label
 function monthlyZarEstimate(s: HubSubscription): number {
-  const amt = s.cost_amount ?? 0;
-  if (amt === 0) return 0;
-  // assume ZAR if currency missing — we live in SA
-  const cycle = (s.billing_cycle ?? "").toLowerCase();
-  if (cycle.includes("annual") || cycle.includes("year")) return amt / 12;
-  if (cycle.includes("quarter")) return amt / 3;
-  if (cycle.includes("week")) return amt * 4.33;
-  return amt; // default monthly
+  if (s.monthly_zar != null) return s.monthly_zar;
+  if (s.monthly_usd != null) return s.monthly_usd * 19; // rough USD→ZAR
+  return 0;
 }
 
 export default function SubscriptionsPage() {
@@ -78,7 +73,7 @@ export default function SubscriptionsPage() {
       .from("hub_subscriptions")
       .select("*")
       .order("category", { ascending: true, nullsFirst: false })
-      .order("service", { ascending: true });
+      .order("service_name", { ascending: true });
     if (err) {
       setError(err.message);
     } else {
@@ -216,15 +211,15 @@ export default function SubscriptionsPage() {
                     />
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                        <span className="text-sm font-medium text-ink break-words">{s.service}</span>
-                        {s.plan && (
-                          <span className="font-mono text-[11px] text-ink-mute">{s.plan}</span>
+                        <span className="text-sm font-medium text-ink break-words">{s.service_name}</span>
+                        {s.tier && (
+                          <span className="font-mono text-[11px] text-ink-mute">{s.tier}</span>
                         )}
                       </div>
                       <div className="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 font-mono text-[11px] text-ink-mute">
                         {s.billing_cycle && <span>{s.billing_cycle}</span>}
-                        {s.next_renewal && <span>· renews {fmtDate(s.next_renewal)}</span>}
-                        {s.owner && <span>· {s.owner}</span>}
+                        {s.renewal_date && <span>· renews {fmtDate(s.renewal_date)}</span>}
+                        {s.payment_method && <span>· {s.payment_method}</span>}
                       </div>
                       {s.notes && (
                         <div className="mt-1 line-clamp-1 text-[12px] text-ink-dim">
@@ -232,9 +227,12 @@ export default function SubscriptionsPage() {
                         </div>
                       )}
                     </div>
-                    {typeof s.cost_amount === "number" && (
+                    {(s.monthly_zar != null || s.monthly_usd != null) && (
                       <span className="shrink-0 font-display text-sm font-semibold text-gold">
-                        {fmtMoney(s.cost_amount, s.cost_currency)}
+                        {s.monthly_zar != null
+                          ? fmtMoney(s.monthly_zar, "ZAR")
+                          : fmtMoney(s.monthly_usd, "USD")}
+                        <span className="ml-1 font-mono text-[10px] font-normal text-ink-ghost">/mo</span>
                       </span>
                     )}
                   </div>

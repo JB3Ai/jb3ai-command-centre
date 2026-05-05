@@ -6,14 +6,14 @@ type Direction = "inbound" | "outbound";
 
 interface WaMessage {
   id: string;
-  phone_number: string;
-  contact_name: string | null;
+  jid: string;           // e.g. 27711234567@s.whatsapp.net
+  display_name: string | null;
   direction: Direction;
   body: string;
+  sent_at: string;
+  flagged: boolean;      // needs_reply equivalent
+  has_media: boolean;
   created_at: string;
-  responded: boolean;
-  needs_reply: boolean;
-  is_archived: boolean;
 }
 
 interface Thread {
@@ -87,8 +87,7 @@ function MessageBubble({ msg }: { msg: WaMessage }) {
       >
         <p>{msg.body}</p>
         <p className={`text-xs mt-1 ${isOut ? "text-cyan-400/60 text-right" : "text-zinc-500"}`}>
-          {formatTime(msg.created_at)}
-          {isOut && msg.responded && <Check className="inline w-3 h-3 ml-1" />}
+          {formatTime(msg.sent_at ?? msg.created_at ?? "")}
         </p>
       </div>
     </div>
@@ -108,8 +107,7 @@ export default function WhatsAppPage() {
       const { data } = await supabase
         .from("hub_whatsapp_messages")
         .select("*")
-        .eq("is_archived", false)
-        .order("created_at", { ascending: false })
+        .order("sent_at", { ascending: false })
         .limit(500);
       setMessages(data ?? []);
       setLoading(false);
@@ -127,22 +125,26 @@ export default function WhatsAppPage() {
     load();
   }, []);
 
-  // Group messages into threads by phone number
+  // Group messages into threads by JID (strip @s.whatsapp.net suffix for display)
   const threads = useMemo((): Thread[] => {
     const map = new Map<string, WaMessage[]>();
     for (const msg of [...messages].reverse()) {
-      const arr = map.get(msg.phone_number) ?? [];
+      const arr = map.get(msg.jid) ?? [];
       arr.push(msg);
-      map.set(msg.phone_number, arr);
+      map.set(msg.jid, arr);
     }
     return Array.from(map.entries())
-      .map(([phone, msgs]) => ({
-        phone,
-        name: msgs[msgs.length - 1].contact_name ?? phone,
-        messages: msgs,
-        needsReply: msgs.some(m => m.needs_reply),
-        lastAt: msgs[msgs.length - 1].created_at,
-      }))
+      .map(([phone, msgs]) => {
+        const last = msgs[msgs.length - 1];
+        const displayPhone = phone.replace(/@s\.whatsapp\.net$/, "");
+        return {
+          phone,
+          name: last.display_name ?? displayPhone,
+          messages: msgs,
+          needsReply: msgs.some(m => m.flagged),
+          lastAt: last.sent_at ?? last.created_at ?? new Date().toISOString(),
+        };
+      })
       .sort((a, b) => new Date(b.lastAt).getTime() - new Date(a.lastAt).getTime());
   }, [messages]);
 
@@ -159,12 +161,12 @@ export default function WhatsAppPage() {
 
   async function markReplied(phone: string) {
     setMessages(prev => prev.map(m =>
-      m.phone_number === phone ? { ...m, needs_reply: false, responded: true } : m));
+      m.jid === phone ? { ...m, flagged: false } : m));
     await supabase
       .from("hub_whatsapp_messages")
-      .update({ needs_reply: false, responded: true })
-      .eq("phone_number", phone)
-      .eq("needs_reply", true);
+      .update({ flagged: false })
+      .eq("jid", phone)
+      .eq("flagged", true);
   }
 
   const needsReplyCount = threads.filter(t => t.needsReply).length;

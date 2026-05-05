@@ -162,15 +162,29 @@ export type HubBraveheart = {
 
 export type HubSubscription = {
   id: string;
-  service: string;
-  plan?: string;
+  service_name: string;
+  tier?: string;
   status?: string;
-  cost_amount?: number;
-  cost_currency?: string;
+  monthly_usd?: number;
+  monthly_zar?: number;
   billing_cycle?: string;
-  next_renewal?: string;
-  owner?: string;
+  renewal_date?: string;
+  payment_method?: string;
+  account_email?: string;
   category?: string;
   notes?: string;
-  synced_at: string;
+  synced_at?: string;
+  created_at?: string;
+};
+
+export type HubWhatsAppMessage = {
+  id: string;
+  jid: string;
+  display_name?: string;
+  direction: "inbound" | "outbound";
+  body?: string;
+  has_media?: boolean;
+  sent_at?: string;
+  flagged?: boolean;
+  created_at?: string;
 };

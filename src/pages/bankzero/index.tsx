@@ -37,7 +37,12 @@ const CATEGORY_RULES: [RegExp, string][] = [
   [/interest|fee |charge|penalty/i,                                        "Bank Fees"],
 ];
 
-function autoCategory(desc: string): string {
+function autoCategory(desc: string, type?: string): string {
+  const t = type?.toLowerCase() ?? "";
+  if (t === "atm withdrawal" || t.includes("atm")) return "Cash";
+  if (t === "buy data") return "Airtime/Data";
+  if (t === "payment out") return "Transfers";
+  if (t === "card purchase" || t === "phone tap") { /* fall through to rules */ }
   for (const [re, cat] of CATEGORY_RULES) {
     if (re.test(desc)) return cat;
   }
@@ -89,7 +94,9 @@ function parseBankZeroCSV(text: string, _filename: string): ParsedRow[] {
   // Find column indices — flexible for BankZero & common SA bank exports
   const col = (names: string[]) => names.map(n => header.indexOf(n)).find(i => i >= 0) ?? -1;
   const dateIdx   = col(["date","transaction_date","txn_date","value_date"]);
-  const descIdx   = col(["description","narrative","details","reference","transaction_description"]);
+  const desc1Idx  = col(["description_1","description","narrative","details","reference","transaction_description"]);
+  const desc2Idx  = col(["description_2","additional_description"]);
+  const typeIdx   = col(["type","transaction_type","txn_type"]);
   const amtIdx    = col(["amount","amount_(zar)","transaction_amount"]);
   const debitIdx  = col(["debit","debit_amount","debits"]);
   const creditIdx = col(["credit","credit_amount","credits"]);
@@ -103,7 +110,10 @@ function parseBankZeroCSV(text: string, _filename: string): ParsedRow[] {
     const txn_date = parseDate(dateStr);
     if (!txn_date.match(/^\d{4}-\d{2}-\d{2}$/)) continue;
 
-    const desc = descIdx >= 0 ? r[descIdx] : r[1] ?? "";
+    const raw1 = desc1Idx >= 0 ? r[desc1Idx] : r[1] ?? "";
+    const raw2 = desc2Idx >= 0 ? r[desc2Idx] : "";
+    const txnType = typeIdx >= 0 ? r[typeIdx] : "";
+    const desc = raw2 ? `${raw1} — ${raw2}` : raw1;
     let amount_zar = 0;
     if (amtIdx >= 0) {
       amount_zar = parseAmount(r[amtIdx]);
@@ -113,7 +123,7 @@ function parseBankZeroCSV(text: string, _filename: string): ParsedRow[] {
       amount_zar = credit - debit; // credit positive, debit negative
     }
     const balance_zar = balIdx >= 0 ? parseAmount(r[balIdx]) : null;
-    const category = autoCategory(desc);
+    const category = autoCategory(desc, txnType);
     const _key = `${txn_date}|${desc}|${amount_zar}`;
     results.push({ txn_date, description: desc, amount_zar, balance_zar, category, _key });
   }
@@ -386,3 +396,4 @@ export default function BankZeroPage() {
     </div>
   );
 }
+

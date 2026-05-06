@@ -24,17 +24,34 @@ interface ParsedRow {
 
 // ── Auto-categorisation ────────────────────────────────────────────────────
 const CATEGORY_RULES: [RegExp, string][] = [
-  [/checkers|woolworths|pick n pay|pnp|spar|food lover|shoprite|clicks/i, "Groceries"],
-  [/uber eats|mr d|mr delivery|bolt food|kfc|mcdon|nandos|steers/i,       "Takeaways"],
-  [/netflix|spotify|apple|google play|dstv|showmax/i,                      "Subscriptions"],
-  [/sasol|engen|bp |caltex|shell|total |fuel|petrol/i,                     "Fuel"],
-  [/uber|bolt |taxi|gautrain|intercape|greyhound/i,                        "Transport"],
-  [/vodacom|mtn |cell c|telkom|afrihost|rain /i,                           "Airtime/Data"],
-  [/transfer|payment to|pay to|eft /i,                                     "Transfers"],
+  // Dev & SaaS — match before generic rules
+  [/anthropic|github|vercel|netlify|notion|figma|canva|google workspace|ngrok|taskade|cloudflare|digitalocean|aws |amazon web|heroku|stripe|sendgrid|twilio/i, "Dev/SaaS"],
+  // Subscriptions — be specific, avoid matching "Apple Pay"
+  [/netflix|spotify|apple\.com|apple music|apple tv|icloud|google play|dstv|showmax|disney\+|dropbox|microsoft 365|adobe/i, "Subscriptions"],
+  // Groceries
+  [/checkers|woolworths|pick n pay|\bpnp\b|spar|food lover|shoprite|clicks|kwikspar|parkway\b/i, "Groceries"],
+  // Food & Takeaways
+  [/uber eats|mr d food|mr delivery|bolt food|kfc|mcdonalds|mcd |nandos|steers|panarottis|ocean basket|spur |piza inn|debonairs|coffee|cafe|eatery|restaurant|kitchen|diner|grill|bakery|motherland|abantu/i, "Dining"],
+  // Fuel — fixed: no trailing space required on BP
+  [/sasol|engen|\bbp\b|caltex|shell\b|total\b|fuel|petrol/i,              "Fuel"],
+  // Transport
+  [/\buber\b|bolt |taxi|gautrain|intercape|greyhound/i,                    "Transport"],
+  // Airtime / Data
+  [/vodacom|mtn |cell c|telkom|afrihost|\brain\b/i,                        "Airtime/Data"],
+  // Transfers
+  [/transfer|payment to|pay to|\beft\b/i,                                  "Transfers"],
+  // Income
   [/salary|payroll|income|wage/i,                                          "Income"],
-  [/cashsend|atm |cash/i,                                                  "Cash"],
-  [/medical|dis-chem|pharmacy|doctor|dentist|hospital/i,                   "Medical"],
-  [/interest|fee |charge|penalty/i,                                        "Bank Fees"],
+  // Cash
+  [/cashsend|\batm\b/i,                                                    "Cash"],
+  // Medical
+  [/medical|dis-chem|pharmacy|doctor|dentist|hospital|clicks pharmacy/i,   "Medical"],
+  // Bank Fees
+  [/interest|bank fee|service fee|monthly fee|penalty/i,                   "Bank Fees"],
+  // Entertainment & Leisure
+  [/rollercade|cinema|ster-kinekor|nu metro|netflix|gaming|steam|playstation/i, "Entertainment"],
+  // Liquor
+  [/liquor|bottle store|wine|beer|spirit/i,                                "Liquor"],
 ];
 
 function autoCategory(desc: string, type?: string): string {
@@ -396,4 +413,5 @@ export default function BankZeroPage() {
     </div>
   );
 }
+
 

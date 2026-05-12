@@ -103,19 +103,19 @@ export default function NewsPage() {
   return (
     <div className="flex flex-col h-full">
       {/* ── Header ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-edge">
         <div className="flex items-center gap-3">
-          <Newspaper className="w-5 h-5 text-[#2AF1FF]" />
-          <h1 className="font-['Orbitron'] text-lg font-semibold tracking-wide">News</h1>
+          <Newspaper className="w-5 h-5 text-cyan" />
+          <h1 className="font-display text-lg font-semibold tracking-wide text-ink">News</h1>
           {unreadCount > 0 && (
-            <Badge className="bg-[#2AF1FF]/15 text-[#2AF1FF] border-[#2AF1FF]/30 font-['Orbitron'] text-xs">
+            <Badge className="bg-cyan-15 text-cyan border-cyan-30 font-display text-xs">
               {unreadCount} unread
             </Badge>
           )}
         </div>
         <Button
           variant="ghost" size="sm"
-          className="text-zinc-400 hover:text-white"
+          className="text-ink-dim hover:text-ink"
           onClick={load}
           disabled={refreshing}
         >
@@ -125,7 +125,7 @@ export default function NewsPage() {
       </div>
 
       {/* ── Filters ────────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-2 px-6 py-3 border-b border-white/10 bg-black/20">
+      <div className="flex flex-wrap items-center gap-2 px-6 py-3 border-b border-edge bg-steel/50">
         {/* Read state */}
         <div className="flex items-center gap-1 mr-2">
           {(["all", "unread", "starred"] as const).map((f) => (
@@ -135,8 +135,8 @@ export default function NewsPage() {
               className={cn(
                 "px-3 py-1 rounded text-xs font-medium transition-colors capitalize",
                 filter === f
-                  ? "bg-[#2AF1FF]/15 text-[#2AF1FF] border border-[#2AF1FF]/30"
-                  : "text-zinc-400 hover:text-white hover:bg-white/5"
+                  ? "bg-cyan-15 text-cyan border border-cyan-30"
+                  : "text-ink-dim hover:text-ink hover:bg-steel"
               )}
             >
               {f}
@@ -146,14 +146,14 @@ export default function NewsPage() {
         {/* Source filter */}
         {sources.length > 0 && (
           <div className="flex items-center gap-1 flex-wrap">
-            <Filter className="w-3 h-3 text-zinc-500" />
+            <Filter className="w-3 h-3 text-ink-mute" />
             <button
               onClick={() => setSourceFilter("all")}
               className={cn(
                 "px-2 py-1 rounded text-xs transition-colors",
                 sourceFilter === "all"
-                  ? "bg-white/10 text-white"
-                  : "text-zinc-500 hover:text-zinc-300"
+                  ? "bg-steel text-ink"
+                  : "text-ink-mute hover:text-ink-dim"
               )}
             >
               All sources
@@ -166,7 +166,7 @@ export default function NewsPage() {
                   onClick={() => setSourceFilter(s === sourceFilter ? "all" : s)}
                   className={cn(
                     "px-2 py-0.5 rounded border text-xs transition-colors",
-                    sourceFilter === s ? meta.colour : "text-zinc-500 border-zinc-700 hover:text-zinc-300"
+                    sourceFilter === s ? meta.colour : "text-ink-mute border-edge hover:text-ink-dim"
                   )}
                 >
                   {meta.label}
@@ -183,16 +183,16 @@ export default function NewsPage() {
           <div className="p-6 space-y-3">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="flex gap-3">
-                <Skeleton className="w-4 h-4 mt-1 rounded-full bg-white/5" />
+                <Skeleton className="w-4 h-4 mt-1 rounded-full bg-steel" />
                 <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-3/4 bg-white/5 rounded" />
-                  <Skeleton className="h-3 w-1/2 bg-white/5 rounded" />
+                  <Skeleton className="h-4 w-3/4 bg-steel rounded" />
+                  <Skeleton className="h-3 w-1/2 bg-steel rounded" />
                 </div>
               </div>
             ))}
           </div>
         ) : visible.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 text-zinc-500 gap-3">
+          <div className="flex flex-col items-center justify-center h-64 text-ink-mute gap-3">
             <Newspaper className="w-10 h-10 opacity-30" />
             <p className="text-sm">
               {items.length === 0
@@ -201,26 +201,26 @@ export default function NewsPage() {
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-edge">
             {visible.map((item) => {
               const meta = sourceMeta(item.source);
               return (
                 <div
                   key={item.id}
                   className={cn(
-                    "flex items-start gap-3 px-6 py-3 group hover:bg-white/[0.03] transition-colors",
+                    "flex items-start gap-3 px-6 py-3 group hover:bg-steel/30 transition-colors",
                     item.read && "opacity-50"
                   )}
                 >
                   {/* Read indicator */}
                   <button
-                    className="mt-1 shrink-0 text-zinc-600 hover:text-[#2AF1FF] transition-colors"
+                    className="mt-1 shrink-0 text-ink-ghost hover:text-cyan transition-colors"
                     onClick={() => !item.read && markRead(item.id)}
                     title={item.read ? "Read" : "Mark read"}
                   >
                     {item.read
                       ? <CheckCircle2 className="w-3.5 h-3.5" />
-                      : <Circle className="w-3.5 h-3.5 fill-[#2AF1FF]/30 text-[#2AF1FF]" />
+                      : <Circle className="w-3.5 h-3.5 fill-cyan-30 text-cyan" />
                     }
                   </button>
 
@@ -236,23 +236,23 @@ export default function NewsPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => markRead(item.id)}
-                          className="text-sm font-medium text-zinc-200 hover:text-white leading-snug group-hover:underline underline-offset-2 line-clamp-2"
+                          className="text-sm font-medium text-ink hover:text-ink leading-snug group-hover:underline underline-offset-2 line-clamp-2"
                         >
                           {item.title}
                         </a>
                       ) : (
-                        <span className="text-sm font-medium text-zinc-200 leading-snug line-clamp-2">
+                        <span className="text-sm font-medium text-ink leading-snug line-clamp-2">
                           {item.title}
                         </span>
                       )}
                     </div>
                     {item.summary && (
-                      <p className="text-xs text-zinc-500 mt-1 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-ink-mute mt-1 line-clamp-2 leading-relaxed">
                         {item.summary}
                       </p>
                     )}
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] text-zinc-600">
+                      <span className="text-[10px] text-ink-ghost">
                         {relativeTime(item.published_at ?? item.created_at)}
                       </span>
                     </div>
@@ -265,8 +265,8 @@ export default function NewsPage() {
                       className={cn(
                         "p-1 rounded transition-colors",
                         item.starred
-                          ? "text-yellow-400 hover:text-yellow-300"
-                          : "text-zinc-600 hover:text-yellow-400"
+                          ? "text-gold hover:text-gold/80"
+                          : "text-ink-ghost hover:text-gold"
                       )}
                       title={item.starred ? "Unstar" : "Star"}
                     >
@@ -278,7 +278,7 @@ export default function NewsPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => markRead(item.id)}
-                        className="p-1 rounded text-zinc-600 hover:text-white transition-colors"
+                        className="p-1 rounded text-ink-ghost hover:text-ink transition-colors"
                         title="Open"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />

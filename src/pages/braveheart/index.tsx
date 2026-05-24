@@ -4,6 +4,7 @@ import {
   RefreshCw,
   AlertTriangle,
   ShieldAlert,
+  Clock,
 } from "lucide-react";
 import { format } from "date-fns";
 import { supabase, type HubBraveheart } from "@/lib/supabase";
@@ -23,7 +24,47 @@ import { supabase, type HubBraveheart } from "@/lib/supabase";
  */
 
 const PRIORITIES = ["Critical", "High", "Medium", "Low"] as const;
-type Priority = (typeof PRIORITIES)[number] | "All";
+const EXTRA_FILTERS = ["Needs Action", "Stale", "Court 30d"] as const;
+type Filter = "All" | (typeof PRIORITIES)[number] | (typeof EXTRA_FILTERS)[number];
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+const STALE_DAYS = 30;
+const ACTION_TOUCH_DAYS = 14;
+const COURT_WINDOW_DAYS = 30;
+const ACTION_DUE_DAYS = 7;
+const RESOLVED_STATUSES = ["resolved", "closed", "paid", "settled", "done"];
+
+function isResolved(status?: string | null): boolean {
+  if (!status) return false;
+  return RESOLVED_STATUSES.includes(status.toLowerCase());
+}
+
+function daysSince(iso?: string | null): number {
+  if (!iso) return Infinity;
+  return (Date.now() - new Date(iso).getTime()) / DAY_MS;
+}
+
+function daysUntil(iso?: string | null): number {
+  if (!iso) return Infinity;
+  return (new Date(iso).getTime() - Date.now()) / DAY_MS;
+}
+
+function isStale(r: HubBraveheart): boolean {
+  return !isResolved(r.status) && daysSince(r.last_correspondence_at) > STALE_DAYS;
+}
+
+function needsAction(r: HubBraveheart): boolean {
+  if (r.response_status === "red") return true;
+  const dueIn = daysUntil(r.next_action_due);
+  if (dueIn >= -365 && dueIn <= ACTION_DUE_DAYS) return true;
+  if (!isResolved(r.status) && daysSince(r.last_correspondence_at) > ACTION_TOUCH_DAYS) return true;
+  return false;
+}
+
+function isCourtSoon(r: HubBraveheart): boolean {
+  const d = daysUntil(r.court_date);
+  return d >= 0 && d <= COURT_WINDOW_DAYS;
+}
 
 function priorityClass(p?: string | null): string {
   switch (p) {
@@ -75,7 +116,7 @@ export default function BraveheartPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
-  const [filter, setFilter] = useState<Priority>("All");
+  const [filter, setFilter] = useState<Filter>("All");
   const [expanded, setExpanded] = useState<string | null>(null);
 
   async function load() {
@@ -100,8 +141,32 @@ export default function BraveheartPage() {
   }, []);
 
   const filtered = useMemo(() => {
-    if (filter === "All") return rows;
-    return rows.filter((r) => r.priority === filter);
+    switch (filter) {
+      case "All":
+        return rows;
+      case "Needs Action": {
+        const subset = rows.filter(needsAction);
+        // oldest last_correspondence first so most-ignored floats to top
+        return [...subset].sort(
+          (a, b) => daysSince(b.last_correspondence_at) - daysSince(a.last_correspondence_at),
+        );
+      }
+      case "Stale": {
+        const subset = rows.filter(isStale);
+        return [...subset].sort(
+          (a, b) => daysSince(b.last_correspondence_at) - daysSince(a.last_correspondence_at),
+        );
+      }
+      case "Court 30d": {
+        const subset = rows.filter(isCourtSoon);
+        // soonest court date first
+        return [...subset].sort(
+          (a, b) => daysUntil(a.court_date) - daysUntil(b.court_date),
+        );
+      }
+      default:
+        return rows.filter((r) => r.priority === filter);
+    }
   }, [rows, filter]);
 
   const totals = useMemo(() => {
@@ -116,6 +181,9 @@ export default function BraveheartPage() {
     for (const p of PRIORITIES) {
       map[p] = rows.filter((r) => r.priority === p).length;
     }
+    map["Needs Action"] = rows.filter(needsAction).length;
+    map["Stale"] = rows.filter(isStale).length;
+    map["Court 30d"] = rows.filter(isCourtSoon).length;
     return map;
   }, [rows]);
 
@@ -183,9 +251,9 @@ export default function BraveheartPage() {
         </div>
       )}
 
-      {/* Filter chips */}
+      {/* Filter chips — priorities + action-oriented filters */}
       <div className="mt-6 flex flex-wrap gap-2">
-        {(["All", ...PRIORITIES] as Priority[]).map((p) => (
+        {(["All", ...PRIORITIES] as Filter[]).map((p) => (
           <button
             key={p}
             type="button"
@@ -202,6 +270,31 @@ export default function BraveheartPage() {
             </span>
           </button>
         ))}
+        {/* Action-oriented chips — visually separated, rose accent when non-zero */}
+        <span className="mx-2 hidden h-6 w-px self-center bg-edge sm:inline-block" aria-hidden="true" />
+        {(EXTRA_FILTERS as readonly Filter[]).map((f) => {
+          const isActive = filter === f;
+          const hasItems = (counts[f] ?? 0) > 0;
+          const baseClasses = "rounded-sm border px-3 py-1 text-[11px] font-medium";
+          const stateClasses = isActive
+            ? "border-rose-400/40 bg-rose-500/10 text-rose-300"
+            : hasItems
+              ? "border-edge bg-steel text-ink hover:border-rose-400/30"
+              : "border-edge bg-steel text-ink-mute hover:text-ink";
+          return (
+            <button
+              key={f}
+              type="button"
+              onClick={() => setFilter(f)}
+              className={`${baseClasses} ${stateClasses}`}
+            >
+              {f}{" "}
+              <span className="ml-1 font-mono text-[10px] text-ink-mute">
+                {counts[f] ?? 0}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* List */}
@@ -251,7 +344,16 @@ export default function BraveheartPage() {
                         {m.creditor && <span>{m.creditor}</span>}
                         {m.action_status && <span>· {m.action_status}</span>}
                         {m.last_correspondence_at && (
-                          <span>· last touch {fmtDate(m.last_correspondence_at)}</span>
+                          <span className={isStale(m) ? "inline-flex items-center gap-1 text-amber-300" : ""}>
+                            · last touch {fmtDate(m.last_correspondence_at)}
+                            {isStale(m) && (
+                              <Clock
+                                className="h-3 w-3"
+                                strokeWidth={2}
+                                aria-label={`Stale — no contact in ${Math.floor(daysSince(m.last_correspondence_at))} days`}
+                              />
+                            )}
+                          </span>
                         )}
                       </div>
                     </div>

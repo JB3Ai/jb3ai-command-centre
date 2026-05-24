@@ -217,14 +217,14 @@ children.push(table([
   ['/home', 'Built (Phase 2)', '2', 'hub_calendar, hub_emails, hub_tasks, hub_daily_intentions, hub_briefings'],
   ['/braveheart', 'Built (Phase 2)', '2', 'hub_braveheart (24 seeded rows)'],
   ['/bankzero', 'Placeholder', '4', 'hub_bankzero_transactions'],
-  ['/whatsapp', 'Placeholder', '3', 'hub_whatsapp_messages'],
+  ['/whatsapp', 'Built (Phase 3) — schema audited 2026-05-23, table currently empty', '3', 'hub_whatsapp_messages'],
   ['/subscriptions', 'Built (Phase 2)', '2', 'hub_subscriptions, hub_subscriptions_meta'],
   ['/ecosystem', 'Built (Phase 2)', '2', 'hub_sync_status'],
   ['/projects', 'Built (Phase 2)', '2', 'hub_deploys'],
-  ['/chronicle', 'Placeholder', '3', 'hub_monthly_chronicles'],
-  ['/media', 'Placeholder', '3', 'hub_media_items'],
-  ['/marketing', 'Placeholder', '3', 'hub_marketing_leads'],
-  ['/news', 'Placeholder', '3', 'hub_news_items'],
+  ['/chronicle', 'Built (Phase 3) — schema audited 2026-05-23, all columns match', '3', 'hub_monthly_chronicles'],
+  ['/media', 'Built (Phase 3) — schema audited 2026-05-23, all columns match', '3', 'hub_media_items'],
+  ['/marketing', 'Built (Phase 3) — schema audited 2026-05-23, all columns match', '3', 'hub_marketing_leads'],
+  ['/news', 'Built (Phase 3) — schema audited 2026-05-23, all columns match', '3', 'hub_news_items'],
   ['/notes', 'Built (Phase 2)', '2', 'hub_notes_dump'],
   ['/links', 'Built (Phase 2)', '2', 'hub_links'],
   ['/config', 'Built (Phase 1)', '1', 'hub_sync_status'],
@@ -324,7 +324,8 @@ children.push(table([
 
 // 11. Open issues
 children.push(h1('11. Open issues / loose ends'));
-children.push(num('NEXT PRIORITY: Phase 3 panels (/news, /chronicle, /media, /marketing, /whatsapp) are still PlaceholderPage components. All 5 ingest tables are now populated by Kestra — wire each panel to read from its hub_* table using the Phase 2 panel pattern.'));
+children.push(num('Phase 3 panels (/news, /chronicle, /media, /marketing, /whatsapp) are already BUILT and schema-audited 2026-05-23. Smoke-test them in production — likely just confirmation needed. Note: /whatsapp will render empty until the WhatsApp Go bridge actually writes rows.'));
+children.push(num('When the first WhatsApp message lands in hub_whatsapp_messages, immediately run "select distinct direction from hub_whatsapp_messages" — the panel uses ‘in’/‘out’, the Kestra digest uses ‘inbound’/‘outbound’. Patch the loser to match.'));
 children.push(num('Dead code in KESTRA-FLOWS\\: restart-kestra.ps1 + kestra.secrets.env target a standalone container that is NOT in use. Candidates for deletion (or rewrite to target the paperclip stack).'));
 children.push(num('Supabase JWT Secret rotation verification pending — the secret was rotated on 2026-05-22 after an accidental paste in chat. Confirm rotation took effect in Supabase Dashboard -> Settings -> API.'));
 children.push(num('WhatsApp flow optional restore: run the migration adding responded, needs_reply, is_archived boolean columns to hub_whatsapp_messages, then revert whatsapp_logs_ingest.yml to its full pre-2026-05-23 form.'));
@@ -412,7 +413,8 @@ children.push(p('KESTRA-FLOWS\\restart-kestra.ps1 creates a standalone container
 
 // 15. Suggested next-steps order
 children.push(h1('15. Suggested next steps for the developer'));
-children.push(num('Wire Phase 3 panels (/news, /chronicle, /media, /marketing, /whatsapp) to their now-populated hub_* tables. Follow the Phase 2 panel pattern: brand-aligned card, header with manual Refresh + last-sync pill, summary strip, error banner, empty/loading/error states.'));
+children.push(num('Smoke-test all 5 Phase 3 panels in production (/news, /chronicle, /media, /marketing, /whatsapp). Schemas audited 2026-05-23 — should render cleanly. /whatsapp will show empty state until the Go bridge starts writing.'));
+children.push(num('Get the WhatsApp Go bridge writing rows into hub_whatsapp_messages. Separate task; depends on the bridge service running.'));
 children.push(num('Verify Supabase JWT Secret rotation took effect (Dashboard -> Settings -> API).'));
 children.push(num('Clean up dead code: delete KESTRA-FLOWS\\restart-kestra.ps1 + kestra.secrets.env (or rewrite to target paperclip stack).'));
 children.push(num('Optional: run the WhatsApp schema migration (responded, needs_reply, is_archived booleans) and restore full whatsapp_logs_ingest flow.'));

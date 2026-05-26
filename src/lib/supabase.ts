@@ -177,6 +177,22 @@ export type HubSubscription = {
   created_at?: string;
 };
 
+export type HubBraveheartDocument = {
+  id: string;
+  file_path: string;
+  file_name: string;
+  file_hash: string;
+  file_size_bytes?: number;
+  doc_type?: string;
+  doc_date?: string;
+  creditor_hint?: string;
+  braveheart_id?: string;
+  page_count?: number;
+  text_extracted?: boolean;
+  scanned_at: string;
+  notes?: string;
+};
+
 export type HubWhatsAppMessage = {
   id: string;
   jid: string;

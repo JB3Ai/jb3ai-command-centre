@@ -5,9 +5,11 @@ import {
   AlertTriangle,
   ShieldAlert,
   Clock,
+  FileText,
+  Link2,
 } from "lucide-react";
 import { format } from "date-fns";
-import { supabase, type HubBraveheart } from "@/lib/supabase";
+import { supabase, type HubBraveheart, type HubBraveheartDocument } from "@/lib/supabase";
 
 /**
  * OS³ Command Centre — BRAVEHEART (Task #15)
@@ -111,6 +113,30 @@ function fmtDate(iso?: string | null): string {
   }
 }
 
+function fmtBytes(bytes?: number | null): string {
+  if (bytes == null) return "—";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function docTypeBadgeClass(t?: string | null): string {
+  switch (t?.toLowerCase()) {
+    case "summons":
+    case "court order":
+    case "judgment":
+      return "border-rose-400/40 bg-rose-500/10 text-rose-300";
+    case "statement":
+    case "invoice":
+      return "border-amber-400/40 bg-amber-500/10 text-amber-300";
+    case "letter":
+    case "correspondence":
+      return "border-cyan-30 bg-cyan-10 text-cyan";
+    default:
+      return "border-edge bg-steel text-ink-mute";
+  }
+}
+
 export default function BraveheartPage() {
   const [rows, setRows] = useState<HubBraveheart[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,6 +144,50 @@ export default function BraveheartPage() {
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [filter, setFilter] = useState<Filter>("All");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [docs, setDocs] = useState<HubBraveheartDocument[]>([]);
+  const [docsLoading, setDocsLoading] = useState(true);
+  const [linkingDoc, setLinkingDoc] = useState<string | null>(null);
+
+  async function loadDocs() {
+    setDocsLoading(true);
+    const { data } = await supabase
+      .from("hub_braveheart_documents")
+      .select("*")
+      .order("doc_date", { ascending: false, nullsFirst: true });
+    setDocs((data as HubBraveheartDocument[]) ?? []);
+    setDocsLoading(false);
+  }
+
+  async function linkDocToCreditor(docId: string, braveheartId: string) {
+    setLinkingDoc(docId);
+    const { error: err } = await supabase
+      .from("hub_braveheart_documents")
+      .update({ braveheart_id: braveheartId })
+      .eq("id", docId);
+    if (!err) {
+      setDocs((prev) =>
+        prev.map((d) => (d.id === docId ? { ...d, braveheart_id: braveheartId } : d)),
+      );
+    }
+    setLinkingDoc(null);
+  }
+
+  const docsForCreditor = useMemo(() => {
+    const map = new Map<string, HubBraveheartDocument[]>();
+    for (const d of docs) {
+      if (d.braveheart_id) {
+        const arr = map.get(d.braveheart_id) ?? [];
+        arr.push(d);
+        map.set(d.braveheart_id, arr);
+      }
+    }
+    return map;
+  }, [docs]);
+
+  const unlinkedDocs = useMemo(
+    () => docs.filter((d) => !d.braveheart_id),
+    [docs],
+  );
 
   async function load() {
     setLoading(true);
@@ -138,6 +208,7 @@ export default function BraveheartPage() {
 
   useEffect(() => {
     void load();
+    void loadDocs();
   }, []);
 
   const filtered = useMemo(() => {
@@ -241,6 +312,10 @@ export default function BraveheartPage() {
         <span>
           <span className="font-display text-base font-bold text-gold">{fmtZar(totals.exposure)}</span>{" "}
           total exposure
+        </span>
+        <span>
+          <span className="font-display text-base font-bold text-ink">{docs.length}</span>{" "}
+          documents
         </span>
       </div>
 
@@ -391,6 +466,79 @@ export default function BraveheartPage() {
                       {m.notes && (
                         <div className="mt-3 whitespace-pre-wrap text-ink-dim">{m.notes}</div>
                       )}
+
+                      {/* Documents linked to this creditor */}
+                      {(() => {
+                        const credDocs = docsForCreditor.get(m.id);
+                        if (docsLoading) {
+                          return (
+                            <div className="mt-4 border-t border-edge pt-3">
+                              <p className="flex items-center gap-2 text-[11px] text-ink-mute">
+                                <FileText className="h-3.5 w-3.5" strokeWidth={1.5} />
+                                Loading documents…
+                              </p>
+                            </div>
+                          );
+                        }
+                        if (!credDocs || credDocs.length === 0) {
+                          return (
+                            <div className="mt-4 border-t border-edge pt-3">
+                              <p className="flex items-center gap-2 text-[11px] text-ink-mute">
+                                <FileText className="h-3.5 w-3.5" strokeWidth={1.5} />
+                                No documents linked
+                              </p>
+                            </div>
+                          );
+                        }
+                        return (
+                          <div className="mt-4 border-t border-edge pt-3">
+                            <p className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-mute">
+                              <FileText className="h-3.5 w-3.5" strokeWidth={1.5} />
+                              Documents
+                              <span className="font-mono text-[10px] font-normal">
+                                ({credDocs.length})
+                              </span>
+                            </p>
+                            <ul className="space-y-1.5">
+                              {credDocs.map((d) => (
+                                <li
+                                  key={d.id}
+                                  className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-edge bg-graphite px-3 py-2"
+                                >
+                                  <span
+                                    className={`rounded-sm border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] ${docTypeBadgeClass(d.doc_type)}`}
+                                  >
+                                    {d.doc_type ?? "doc"}
+                                  </span>
+                                  {d.file_path ? (
+                                    <a
+                                      href={`computer://${d.file_path}`}
+                                      className="text-[12px] font-medium text-cyan hover:underline"
+                                      title={`Open ${d.file_name}`}
+                                    >
+                                      {d.file_name}
+                                    </a>
+                                  ) : (
+                                    <span className="text-[12px] font-medium text-ink">
+                                      {d.file_name}
+                                    </span>
+                                  )}
+                                  <span className="font-mono text-[10px] text-ink-mute">
+                                    {fmtDate(d.doc_date)}
+                                  </span>
+                                  {(d.page_count != null || d.file_size_bytes != null) && (
+                                    <span className="font-mono text-[10px] text-ink-ghost">
+                                      {d.page_count != null && `${d.page_count}p`}
+                                      {d.page_count != null && d.file_size_bytes != null && " · "}
+                                      {d.file_size_bytes != null && fmtBytes(d.file_size_bytes)}
+                                    </span>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        );
+                      })()}
                     </div>
                   )}
                 </li>
@@ -399,6 +547,79 @@ export default function BraveheartPage() {
           </ul>
         )}
       </div>
+
+      {/* ── Unlinked Documents ── */}
+      {unlinkedDocs.length > 0 && (
+        <div className="mt-8 rounded-md border border-edge bg-surface p-5">
+          <p className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-mute">
+            <Link2 className="h-3.5 w-3.5" strokeWidth={1.5} />
+            Unlinked Documents
+            <span className="font-mono text-[10px] font-normal">
+              ({unlinkedDocs.length})
+            </span>
+          </p>
+
+          <ul className="space-y-2">
+            {unlinkedDocs.map((d) => (
+              <li
+                key={d.id}
+                className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-sm border border-edge bg-graphite px-3 py-2"
+              >
+                <span
+                  className={`rounded-sm border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] ${docTypeBadgeClass(d.doc_type)}`}
+                >
+                  {d.doc_type ?? "doc"}
+                </span>
+
+                {d.file_path ? (
+                  <a
+                    href={`computer://${d.file_path}`}
+                    className="text-[12px] font-medium text-cyan hover:underline"
+                    title={`Open ${d.file_name}`}
+                  >
+                    {d.file_name}
+                  </a>
+                ) : (
+                  <span className="text-[12px] font-medium text-ink">
+                    {d.file_name}
+                  </span>
+                )}
+
+                <span className="font-mono text-[10px] text-ink-mute">
+                  {fmtDate(d.doc_date)}
+                </span>
+
+                {(d.page_count != null || d.file_size_bytes != null) && (
+                  <span className="font-mono text-[10px] text-ink-ghost">
+                    {d.page_count != null && `${d.page_count}p`}
+                    {d.page_count != null && d.file_size_bytes != null && " · "}
+                    {d.file_size_bytes != null && fmtBytes(d.file_size_bytes)}
+                  </span>
+                )}
+
+                {/* Link-to-creditor dropdown */}
+                <select
+                  className="ml-auto rounded-sm border border-edge bg-matte px-2 py-1 text-[11px] text-ink disabled:opacity-40"
+                  value=""
+                  disabled={linkingDoc === d.id}
+                  onChange={(e) => {
+                    if (e.target.value) linkDocToCreditor(d.id, e.target.value);
+                  }}
+                >
+                  <option value="">
+                    {linkingDoc === d.id ? "Linking…" : "Link to creditor"}
+                  </option>
+                  {rows.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.creditor_name}
+                    </option>
+                  ))}
+                </select>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <p className="mt-10 text-[11px] text-ink-ghost">
         Source: <span className="font-mono">hub_braveheart</span> · 24 rows seeded

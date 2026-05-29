@@ -611,7 +611,7 @@ export default function BraveheartPage() {
                   </option>
                   {rows.map((r) => (
                     <option key={r.id} value={r.id}>
-                      {r.creditor_name}
+                      {r.creditor ?? r.title}
                     </option>
                   ))}
                 </select>

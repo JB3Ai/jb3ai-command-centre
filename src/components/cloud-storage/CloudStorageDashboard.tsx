@@ -7,8 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Cloud, AlertCircle, CheckCircle, Clock, XCircle } from 'lucide-react';
-import { CloudStorageIntegration } from '@/lib/cloud-storage/types';
+import { Cloud, Folder, AlertCircle, CheckCircle, Clock, XCircle } from 'lucide-react';
+import type { CloudStorageIntegration } from '@/lib/cloud-storage/types';
 import { CloudStorageManager } from '@/lib/cloud-storage';
 
 interface CloudStorageDashboardProps {
@@ -107,7 +107,7 @@ const CloudStorageDashboard: React.FC<CloudStorageDashboardProps> = ({ cloudStor
                     <Card key={integration.platform}>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                          <Drive className="h-4 w-4" />
+                          <Folder className="h-4 w-4" />
                           {platformInfo.name}
                         </CardTitle>
                       </CardHeader>
@@ -209,7 +209,7 @@ const CloudStorageDashboard: React.FC<CloudStorageDashboardProps> = ({ cloudStor
       </Card>
       
       {error && (
-        <Card variant="destructive">
+        <Card>
           <CardHeader>
             <CardTitle>Error</CardTitle>
           </CardHeader>

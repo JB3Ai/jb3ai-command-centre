@@ -68,14 +68,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/subscriptions" element={<SubscriptionsPage />} />
             <Route path="/ecosystem"     element={<EcosystemPage />} />
             <Route path="/projects"      element={<ProjectsPage />} />
-            <Route path="/chronicle"     element={<ChroniclePage />} />
-            <Route path="/media"         element={<MediaPage />} />
-            <Route path="/marketing"     element={<MarketingPage />} />
-            <Route path="/news"          element={<NewsPage />} />
-            <Route path="/notes"         element={<NotesPage />} />
-            <Route path="/links"         element={<LinksPage />} />
-            <Route path="/config"        element={<ConfigPage />} />
-
+          <Route path="/cloud-storage" element={<CloudStoragePage />} />
             {/* Legacy direct route — productivity gadget. Eventually folds into HOME. */}
             <Route path="/productivity"  element={<ProductivityPanel />} />
 

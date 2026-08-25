@@ -1,0 +1,71 @@
+{
+  "version": "experimental",
+  "name": "example-remote-mcp",
+  "description": "Example remote MCP server for demonstration",
+  "tools": [
+    {
+      "name": "remote_api_call",
+      "description": "Make API calls to external services",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "DELETE"],
+            "description": "HTTP method"
+          },
+          "url": {
+            "type": "string",
+            "description": "Full URL for the API call"
+          },
+          "headers": {
+            "type": "object",
+            "description": "HTTP headers to include"
+          },
+          "body": {
+            "type": "string",
+            "description": "Request body for POST/PUT"
+          }
+        },
+        "required": ["method", "url"]
+      }
+    },
+    {
+      "name": "weather_data",
+      "description": "Get weather information for a location",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string",
+            "description": "City or coordinates for weather data"
+          },
+          "units": {
+            "type": "string",
+            "enum": ["metric", "imperial"],
+            "default": "metric"
+          }
+        },
+        "required": ["location"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "remote_service_status",
+      "description": "Status of various remote services",
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "service": { "type": "string" },
+            "status": { "type": "string" },
+            "last_checked": { "type": "string" },
+            "response_time": { "type": "number" }
+          }
+        }
+      }
+    }
+  ]
+}

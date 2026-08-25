@@ -46,6 +46,7 @@ export const NAV_ITEMS: NavItem[] = [
   { path: "/subscriptions", label: "Subscriptions", icon: ToggleLeft,    group: "ops",     hint: "Toolbox with status lights — toggle on/off" },
   { path: "/ecosystem",     label: "Ecosystem",     icon: Network,       group: "infra",   hint: "Connected services map — overview" },
   { path: "/projects",      label: "Projects",      icon: FolderGit2,    group: "infra",   hint: "GitHub, cPanel, VSCode activity" },
+  { path: "/cloud-storage", label: "Cloud Storage", icon: FolderGit2,    group: "infra",   hint: "Monitor and analyze cloud storage usage" },
   { path: "/chronicle",     label: "Chronicle",     icon: CalendarDays,  group: "content", hint: "Monthly chronicle — current + archive" },
   { path: "/media",         label: "Media",         icon: Image,         group: "content", hint: "Kanban — ideas, prompts, rendering" },
   { path: "/marketing",     label: "Marketing",     icon: Megaphone,     group: "content", hint: "Leads, CRM, campaigns" },

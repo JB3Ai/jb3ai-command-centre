@@ -1,0 +1,62 @@
+{
+  "version": "experimental",
+  "name": "example-local-mcp",
+  "description": "Example local MCP server for demonstration",
+  "tools": [
+    {
+      "name": "local_filesystem_access",
+      "description": "Access to local filesystem operations",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": ["read", "write", "list", "delete"],
+            "description": "Type of file operation"
+          },
+          "path": {
+            "type": "string",
+            "description": "File or directory path"
+          },
+          "content": {
+            "type": "string",
+            "description": "Content to write (for write operations)"
+          }
+        },
+        "required": ["operation", "path"]
+      }
+    },
+    {
+      "name": "system_info",
+      "description": "Get system information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "info_type": {
+            "type": "string",
+            "enum": ["memory", "cpu", "disk", "network"],
+            "description": "Type of system information to retrieve"
+          }
+        },
+        "required": ["info_type"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "active_processes",
+      "description": "Currently running processes on the system",
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "pid": { "type": "integer" },
+            "name": { "type": "string" },
+            "status": { "type": "string" }
+          }
+        }
+      }
+    }
+  ]
+}

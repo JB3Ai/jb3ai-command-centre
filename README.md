@@ -1,53 +1,90 @@
-# React + TypeScript + Vite
+# JB3AI Command Centre
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the main command centre application for managing subscriptions, integrations, and business intelligence.
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── pages/
+│   └── subscriptions/
+│       ├── index.tsx           # Main subscriptions page
+│       ├── components/
+│       │   └── BankZeroUploader.tsx  # Bank Zero statement uploader
+│       └── README.md           # Subscriptions module documentation
+├── lib/
+│   ├── bankzero-parser.ts      # Bank Zero CSV parsing utilities
+│   └── README.md               # Library utilities documentation
+└── ...
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Key Features
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
+### Subscriptions Management
+- View all subscriptions organized by category
+- See subscription status, monthly cost, and renewal dates
+- Summary statistics showing total, active, and cancelled subscriptions
+
+### Bank Zero Integration
+- Drag-and-drop file upload for Bank Zero CSV/PDF statements
+- Automatic transaction parsing and categorization
+- Smart matching of transactions to existing subscriptions
+- Detailed processing results with unmatched transaction review
+
+## New Components
+
+### BankZeroUploader Component
+Located at `src/pages/subscriptions/components/BankZeroUploader.tsx`, this component provides:
+- File upload interface with drag-and-drop support
+- CSV/PDF parsing for Bank Zero statements
+- Transaction matching against existing subscriptions
+- Visual display of processing results
+- Statistics and summaries
+
+### BankZeroParser Utility
+Located at `src/lib/bankzero-parser.ts`, this utility provides:
+- CSV parsing functions for Bank Zero format
+- Transaction matching algorithms
+- Description normalization for better matching
+- Type definitions for transaction data
+
+## Installation
+
+```bash
+npm install
+```
+
+## Development
+
+```bash
+npm run dev
+```
+
+## Building
+
+```bash
+npm run build
+```
+
+## API Endpoints
+
+- `/api/subscriptions` - Manage subscription data
+- `/api/bankzero` - Process Bank Zero statements
+
+## Database Schema
+
+The application uses Supabase for data storage with the following key tables:
+- `hub_subscriptions` - Subscription data
+- `bankzero_statements` - Processed Bank Zero statements
+- `bankzero_transactions` - Individual transaction records
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a pull request
 import reactDom from 'eslint-plugin-react-dom'
 
 export default defineConfig([

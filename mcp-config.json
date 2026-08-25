@@ -1,0 +1,30 @@
+[
+  {
+    "name": "whatsapp-mcp",
+    "path": "./whatsapp-mcp-server",
+    "port": 3001,
+    "type": "whatsapp",
+    "description": "WhatsApp MCP Server for messaging integration"
+  },
+  {
+    "name": "voice-mcp",
+    "path": "./voice-mcp-server",
+    "port": 3002,
+    "type": "voice",
+    "description": "Voice Processing MCP Server for audio transcription"
+  },
+  {
+    "name": "analytics-mcp",
+    "path": "./analytics-mcp-server",
+    "port": 3003,
+    "type": "analytics",
+    "description": "Analytics MCP Server for data processing"
+  },
+  {
+    "name": "social-mcp",
+    "path": "./social-mcp-server",
+    "port": 3004,
+    "type": "social",
+    "description": "Social Media MCP Server for platform integration"
+  }
+]

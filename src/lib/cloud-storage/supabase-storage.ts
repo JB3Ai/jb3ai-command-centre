@@ -3,7 +3,7 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { CloudFile } from './types';
+import type { CloudFile } from './types';
 
 export class SupabaseCloudStorage {
   private supabase: SupabaseClient;

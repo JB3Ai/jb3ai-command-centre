@@ -2,7 +2,7 @@
  * OneDrive Cloud Storage Integration
  */
 
-import { CloudStorageService, CloudFile, CloudStorageConfig } from './types';
+import type { CloudStorageService, CloudFile, CloudStorageConfig } from './types';
 
 export class OneDriveService implements CloudStorageService {
   private config: CloudStorageConfig;

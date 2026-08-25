@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
-import { Upload, FileText, AlertCircle, CheckCircle, XCircle } from "lucide-react";
+import { useState, useRef } from "react";
+import { Upload, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { parseBankZeroCSV, matchTransactionsToSubscriptions, BankZeroTransaction } from "@/lib/bankzero-parser";
 
@@ -13,7 +13,6 @@ export function BankZeroUploader({ onUploadComplete }: BankZeroUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
   const [uploadMessage, setUploadMessage] = useState("");
-  const [parsedTransactions, setParsedTransactions] = useState<BankZeroTransaction[]>([]);
   const [matchedTransactions, setMatchedTransactions] = useState<BankZeroTransaction[]>([]);
   const [unmatchedCount, setUnmatchedCount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -122,7 +121,7 @@ export function BankZeroUploader({ onUploadComplete }: BankZeroUploaderProps) {
       reader.onload = (e) => {
         resolve(e.target?.result as string);
       };
-      reader.onerror = (e) => {
+      reader.onerror = () => {
         reject(new Error("Failed to read file"));
       };
       reader.readAsText(file);

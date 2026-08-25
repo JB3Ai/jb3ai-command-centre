@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { CloudStorageDashboard } from '@/components/cloud-storage/CloudStorageDashboard';
-import { CloudStorageIntegrationPanel } from '@/components/cloud-storage/CloudStorageIntegrationPanel';
+import CloudStorageDashboard from '@/components/cloud-storage/CloudStorageDashboard';
+import CloudStorageIntegrationPanel from '@/components/cloud-storage/CloudStorageIntegrationPanel';
 import { SupabaseCloudStorage } from '@/lib/cloud-storage/supabase-storage';
 import { CloudStorageManager } from '@/lib/cloud-storage';
 

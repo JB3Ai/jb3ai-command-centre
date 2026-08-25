@@ -18,14 +18,6 @@ import WhatsAppPage from "@/pages/whatsapp";
 import SubscriptionsPage from "@/pages/subscriptions";
 import EcosystemPage from "@/pages/ecosystem";
 import ProjectsPage from "@/pages/projects";
-import ChroniclePage from "@/pages/chronicle";
-import MediaPage from "@/pages/media";
-import MarketingPage from "@/pages/marketing";
-import NewsPage from "@/pages/news";
-import NotesPage from "@/pages/notes";
-import LinksPage from "@/pages/links";
-import ConfigPage from "@/pages/config";
-
 import ProductivityPanel from "@/components/ProductivityPanel";
 
 /**

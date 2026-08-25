@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Cloud, Drive, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { Cloud, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 import { CloudStorageManager } from '@/lib/cloud-storage';
 import { SupabaseCloudStorage } from '@/lib/cloud-storage/supabase-storage';
 

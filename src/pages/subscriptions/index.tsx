@@ -455,7 +455,7 @@ export default function SubscriptionsPage() {
                     <Filter className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
                     <select
                       value={filter}
-                      onChange={(e) => setFilter(e.target.value as string)}
+                      onChange={(e) => setFilter(e.target.value as "all" | "active" | "paused" | "incoming" | "outgoing")}
                       className="pl-8 pr-10 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
                     >
                       <option value="all">All</option>

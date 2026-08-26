@@ -19,6 +19,7 @@ import SubscriptionsPage from "@/pages/subscriptions";
 import EcosystemPage from "@/pages/ecosystem";
 import ProjectsPage from "@/pages/projects";
 import ProductivityPanel from "@/components/ProductivityPanel";
+import { CloudStoragePage } from "@/pages/cloud-storage/CloudStoragePage";
 
 /**
  * Route tree for the OS³ Command Centre.

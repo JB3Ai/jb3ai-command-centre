@@ -2,8 +2,6 @@
  * Cloud Storage Authentication Utilities
  */
 
-import { CloudStorageConfig } from './types';
-
 export class CloudStorageAuth {
   /**
    * Generate OAuth URL for Google Drive

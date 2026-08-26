@@ -2,7 +2,7 @@
  * Cloud Storage Integration Module
  */
 
-import { CloudPlatform, CloudStorageService, CloudFile, CloudStorageConfig } from './types';
+import type { CloudPlatform, CloudStorageService, CloudFile, CloudStorageConfig } from './types';
 import { GoogleDriveService } from './google-drive';
 import { OneDriveService } from './one-drive';
 import { iCloudService } from './icloud';

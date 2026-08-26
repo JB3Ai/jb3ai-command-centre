@@ -5,8 +5,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, CheckCircle, Clock, XCircle } from 'lucide-react';
-import { CloudFile } from '@/lib/cloud-storage/types';
+import { AlertTriangle } from 'lucide-react';
+import type { CloudFile } from '@/lib/cloud-storage/types';
 
 interface CloudStorageMonitoringProps {
   files: CloudFile[];

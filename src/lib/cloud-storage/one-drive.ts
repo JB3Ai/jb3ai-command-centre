@@ -5,14 +5,12 @@
 import type { CloudStorageService, CloudFile, CloudStorageConfig } from './types';
 
 export class OneDriveService implements CloudStorageService {
-  private config: CloudStorageConfig;
   private accessToken: string;
   private baseUrl = 'https://graph.microsoft.com/v1.0';
   private watching: boolean = false;
-  private watchInterval: NodeJS.Timeout | null = null;
+  private watchInterval: ReturnType<typeof setTimeout> | null = null;
 
   constructor(config: CloudStorageConfig) {
-    this.config = config;
     this.accessToken = config.accessToken;
   }
 

@@ -3,7 +3,8 @@
 import { useState, useRef } from "react";
 import { Upload, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { parseBankZeroCSV, matchTransactionsToSubscriptions, BankZeroTransaction } from "@/lib/bankzero-parser";
+import type { BankZeroTransaction } from "@/lib/bankzero-parser";
+import { parseBankZeroCSV, matchTransactionsToSubscriptions } from "@/lib/bankzero-parser";
 
 interface BankZeroUploaderProps {
   onUploadComplete?: () => void;
@@ -35,7 +36,7 @@ export function BankZeroUploader({ onUploadComplete }: BankZeroUploaderProps) {
     }
   };
 
-  const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       handleFile(e.target.files[0]);
     }
@@ -45,7 +46,6 @@ export function BankZeroUploader({ onUploadComplete }: BankZeroUploaderProps) {
     // Reset previous state
     setUploadStatus("idle");
     setUploadMessage("");
-    setParsedTransactions([]);
     setMatchedTransactions([]);
     setUnmatchedCount(0);
     
@@ -79,7 +79,7 @@ export function BankZeroUploader({ onUploadComplete }: BankZeroUploaderProps) {
         return;
       }
       
-      setParsedTransactions(transactions);
+      setMatchedTransactions(transactions);
       setUploadMessage(`Parsed ${transactions.length} transactions`);
       
       // Fetch subscriptions for matching
@@ -137,7 +137,6 @@ export function BankZeroUploader({ onUploadComplete }: BankZeroUploaderProps) {
   const resetUploader = () => {
     setUploadStatus("idle");
     setUploadMessage("");
-    setParsedTransactions([]);
     setMatchedTransactions([]);
     setUnmatchedCount(0);
     if (fileInputRef.current) {

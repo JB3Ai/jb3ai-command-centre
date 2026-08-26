@@ -2,17 +2,15 @@
  * iCloud Cloud Storage Integration
  */
 
-import { CloudStorageService, CloudFile, CloudStorageConfig } from './types';
+import type { CloudStorageService, CloudFile, CloudStorageConfig } from './types';
 
 export class iCloudService implements CloudStorageService {
-  private config: CloudStorageConfig;
   private accessToken: string;
   private baseUrl = 'https://api.icloud.com';
   private watching: boolean = false;
-  private watchInterval: NodeJS.Timeout | null = null;
+  private watchInterval: ReturnType<typeof setTimeout> | null = null;
 
   constructor(config: CloudStorageConfig) {
-    this.config = config;
     this.accessToken = config.accessToken;
   }
 

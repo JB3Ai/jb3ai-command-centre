@@ -2,17 +2,15 @@
  * Google Drive Cloud Storage Integration
  */
 
-import { CloudStorageService, CloudFile, CloudStorageConfig } from './types';
+import type { CloudStorageService, CloudFile, CloudStorageConfig } from './types';
 
 export class GoogleDriveService implements CloudStorageService {
-  private config: CloudStorageConfig;
   private accessToken: string;
   private baseUrl = 'https://www.googleapis.com/drive/v3';
   private watching: boolean = false;
-  private watchInterval: NodeJS.Timeout | null = null;
+  private watchInterval: ReturnType<typeof setTimeout> | null = null;
 
   constructor(config: CloudStorageConfig) {
-    this.config = config;
     this.accessToken = config.accessToken;
   }
 

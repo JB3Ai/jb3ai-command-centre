@@ -9,7 +9,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Layout from "@/components/layout/Layout";
 
 import LoginPage from "@/pages/login";
-import AuthCallbackPage from "@/pages/auth-callback";
+import ExecutiveSuitePage from "@/pages/executive-suite";
 
 import HomePage from "@/pages/home";
 import BraveheartPage from "@/pages/braveheart";
@@ -40,7 +40,6 @@ createRoot(document.getElementById("root")!).render(
         <Routes>
           {/* Public routes — outside the Layout (no chrome) */}
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
           {/* Protected routes — wrapped in auth + Layout */}
           <Route
@@ -61,7 +60,8 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/subscriptions" element={<SubscriptionsPage />} />
             <Route path="/ecosystem"     element={<EcosystemPage />} />
             <Route path="/projects"      element={<ProjectsPage />} />
-          <Route path="/cloud-storage" element={<CloudStoragePage />} />
+            <Route path="/executive-suite" element={<ExecutiveSuitePage />} />
+            <Route path="/cloud-storage" element={<CloudStoragePage />} />
             {/* Legacy direct route — productivity gadget. Eventually folds into HOME. */}
             <Route path="/productivity"  element={<ProductivityPanel />} />
 

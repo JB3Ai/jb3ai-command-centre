@@ -11,12 +11,18 @@ export class GoogleDriveService implements CloudStorageService {
   private watchInterval: ReturnType<typeof setTimeout> | null = null;
 
   constructor(config: CloudStorageConfig) {
+    // For PIN code authentication, we'll use the PIN as the access token
     this.accessToken = config.accessToken;
   }
 
   async connect(): Promise<void> {
-    // Validate token and test connection
+    // Validate PIN code and test connection
     try {
+      // For PIN code authentication, we'll validate the PIN before proceeding
+      if (this.accessToken !== '4020') {
+        throw new Error('Invalid PIN code. Please use PIN code 4020.');
+      }
+      
       const response = await fetch(`${this.baseUrl}/about?fields=user`, {
         headers: {
           Authorization: `Bearer ${this.accessToken}`,
@@ -28,7 +34,7 @@ export class GoogleDriveService implements CloudStorageService {
       }
 
       // Connection successful
-      console.log('Connected to Google Drive');
+      console.log('Connected to Google Drive with PIN 4020');
     } catch (error) {
       console.error('Google Drive connection error:', error);
       throw error;

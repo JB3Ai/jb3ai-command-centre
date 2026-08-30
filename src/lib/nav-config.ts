@@ -19,6 +19,7 @@ import {
   StickyNote,
   Link2,
   Settings2,
+  Layers,
 } from "lucide-react";
 
 export type NavGroup = "ops" | "finance" | "comms" | "infra" | "content" | "system";
@@ -44,6 +45,7 @@ export const NAV_ITEMS: NavItem[] = [
   { path: "/bankzero",      label: "BankZero",      icon: Wallet,        group: "finance", hint: "Personal finance — manual CSV import" },
   { path: "/whatsapp",      label: "WhatsApp",      icon: MessageSquare, group: "comms",   hint: "Bridge logs, conversations, flags" },
   { path: "/subscriptions", label: "Subscriptions", icon: ToggleLeft,    group: "ops",     hint: "Toolbox with status lights — toggle on/off" },
+  { path: "/executive-suite", label: "Executive Suite", icon: Layers,      group: "ops",     hint: "Inbound leads & AI briefings, SponcerFlow outbound" },
   { path: "/ecosystem",     label: "Ecosystem",     icon: Network,       group: "infra",   hint: "Connected services map — overview" },
   { path: "/projects",      label: "Projects",      icon: FolderGit2,    group: "infra",   hint: "GitHub, cPanel, VSCode activity" },
   { path: "/cloud-storage", label: "Cloud Storage", icon: FolderGit2,    group: "infra",   hint: "Monitor and analyze cloud storage usage" },

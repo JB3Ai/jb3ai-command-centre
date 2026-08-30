@@ -1,34 +1,36 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
-import { Mail, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Mail, Loader2, CheckCircle2, AlertTriangle, Lock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { getAllowedEmails, useAuth } from "@/lib/auth-context";
 
 type LoginState =
   | { kind: "idle" }
-  | { kind: "sending" }
-  | { kind: "sent" }
+  | { kind: "signingIn" }
+  | { kind: "success" }
   | { kind: "error"; message: string };
 
 /**
- * /login — single-purpose magic-link request page.
+ * /login — single-purpose password login page.
  * Lives OUTSIDE the Layout so the sidebar/topbar/status bar don't render.
  *
  * Lockdown: client-side allowlist (VITE_AUTH_ALLOWED_EMAILS) +
- * `shouldCreateUser: false` on the OTP request, so even if someone
- * bypasses the client check Supabase refuses to create a new account.
+ * Supabase password authentication with strong password requirements.
  * Server-side: Supabase dashboard → Auth → Providers → Email →
  * "Allow signups" OFF; invite jono@jonoblackburn.com once.
  */
 export default function LoginPage() {
   const { session, loading } = useAuth();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [state, setState] = useState<LoginState>({ kind: "idle" });
   const allowed = getAllowedEmails();
 
   // Pre-fill if there's only one allowed email
   useEffect(() => {
-    if (allowed.length === 1) setEmail(allowed[0]);
+    if (allowed.length === 1) {
+      setEmail(allowed[0]);
+    }
   }, [allowed]);
 
   if (loading) return <FullScreenSpinner />;
@@ -36,33 +38,34 @@ export default function LoginPage() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    const trimmed = email.trim().toLowerCase();
-    if (!trimmed) {
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!trimmedEmail) {
       setState({ kind: "error", message: "Enter an email address." });
       return;
     }
-    if (!allowed.includes(trimmed)) {
+    if (!allowed.includes(trimmedEmail)) {
       setState({
         kind: "error",
         message: "This email isn't authorised for the OS³ Command Centre.",
       });
       return;
     }
+    if (!password) {
+      setState({ kind: "error", message: "Enter your password." });
+      return;
+    }
 
-    setState({ kind: "sending" });
-    const { error } = await supabase.auth.signInWithOtp({
-      email: trimmed,
-      options: {
-        shouldCreateUser: false,
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
+    setState({ kind: "signingIn" });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: trimmedEmail,
+      password: password,
     });
 
     if (error) {
       setState({ kind: "error", message: error.message });
       return;
     }
-    setState({ kind: "sent" });
+    setState({ kind: "success" });
   }
 
   return (
@@ -78,25 +81,18 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {state.kind === "sent" ? (
+        {state.kind === "success" ? (
           <div className="text-center">
             <CheckCircle2
               className="mx-auto mb-3 h-8 w-8 text-emerald-500"
               strokeWidth={1.5}
             />
             <h1 className="font-display text-lg font-semibold text-ink">
-              Check your inbox
+              Signing in…
             </h1>
             <p className="mt-2 text-[13px] leading-relaxed text-ink-dim">
-              We sent a magic link to{" "}
-              <span className="text-ink">{email}</span>. Click it to sign in.
+              Redirecting to the dashboard...
             </p>
-            <button
-              onClick={() => setState({ kind: "idle" })}
-              className="mt-5 text-[12px] text-ink-mute underline-offset-2 hover:text-cyan hover:underline"
-            >
-              Use a different email
-            </button>
           </div>
         ) : (
           <form onSubmit={onSubmit} className="space-y-4">
@@ -104,7 +100,7 @@ export default function LoginPage() {
               Sign in
             </h1>
             <p className="text-center text-[12px] text-ink-mute">
-              Enter your authorised email — we'll send you a one-tap sign-in link.
+              Enter your authorised email and password.
             </p>
 
             <label className="block">
@@ -121,7 +117,26 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  disabled={state.kind === "sending"}
+                  disabled={state.kind === "signingIn"}
+                  className="flex-1 bg-transparent text-[13px] text-ink outline-none placeholder:text-ink-ghost disabled:opacity-60"
+                />
+              </div>
+            </label>
+
+            <label className="block">
+              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-ink-ghost">
+                Password
+              </span>
+              <div className="flex items-center gap-2 rounded-md border border-edge bg-steel px-3 py-2 focus-within:border-cyan-30">
+                <Lock className="h-4 w-4 text-ink-mute" strokeWidth={1.75} />
+                <input
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  disabled={state.kind === "signingIn"}
                   className="flex-1 bg-transparent text-[13px] text-ink outline-none placeholder:text-ink-ghost disabled:opacity-60"
                 />
               </div>
@@ -136,16 +151,16 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={state.kind === "sending"}
+              disabled={state.kind === "signingIn"}
               className="flex w-full items-center justify-center gap-2 rounded-md bg-cyan py-2.5 text-[13px] font-bold text-matte transition-opacity hover:opacity-90 disabled:opacity-60"
             >
-              {state.kind === "sending" ? (
+              {state.kind === "signingIn" ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Sending link…
+                  Signing in…
                 </>
               ) : (
-                "Send magic link"
+                "Sign in"
               )}
             </button>
           </form>

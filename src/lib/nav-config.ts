@@ -19,6 +19,7 @@ import {
   StickyNote,
   Link2,
   Settings2,
+  Layers,
 } from "lucide-react";
 
 export type NavGroup = "ops" | "finance" | "comms" | "infra" | "content" | "system";

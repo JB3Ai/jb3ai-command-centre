@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import type { ReactNode } from "react";
@@ -12,6 +12,7 @@ import type { ReactNode } from "react";
 export function ProtectedRoute({ children }: { children: ReactNode }) {
   const { session, loading } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   if (loading) {
     return (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Contact, Tag, Priority } from '../../types/outbound';
+import type { Contact, Tag, Priority } from '../../types/outbound';
 import { 
   Users, 
   Search, 
@@ -7,7 +7,6 @@ import {
   Trash2, 
   Tag as TagIcon, 
   ExternalLink, 
-  Building, 
   Mail, 
   Globe 
 } from 'lucide-react';

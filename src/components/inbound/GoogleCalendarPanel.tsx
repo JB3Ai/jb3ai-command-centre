@@ -8,7 +8,8 @@ import {
   GoogleCalendarEvent 
 } from './lib/googleCalendar';
 import { Lead } from '../../types/inbound';
-import { auditBidirectionalSync, SyncDiscrepancy } from './lib/syncAudit';
+import { auditBidirectionalSync } from './lib/syncAudit';
+import type { SyncDiscrepancy } from './lib/syncAudit';
 import { INITIAL_CALENDAR_EVENTS } from './data/mockData';
 import { 
   Calendar, 
@@ -24,8 +25,7 @@ import {
   ShieldAlert,
   Wrench,
   Video,
-  Send,
-  Building
+  Send
 } from 'lucide-react';
 
 interface GoogleCalendarPanelProps {
@@ -149,7 +149,7 @@ export const GoogleCalendarPanel: React.FC<GoogleCalendarPanelProps> = ({
       const endTimeObj = new Date(new Date(`${eventDate}T${eventTime}:00`).getTime() + durationMinutes * 60000);
       const endISO = endTimeObj.toISOString();
 
-      const created = await createGoogleCalendarEvent(accessToken, {
+      await createGoogleCalendarEvent(accessToken, {
         summary,
         description,
         location,

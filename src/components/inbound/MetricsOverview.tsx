@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Lead } from '../../types/inbound';
+import type { Lead } from '../../types/inbound';
 import { 
   Users, 
   Search, 

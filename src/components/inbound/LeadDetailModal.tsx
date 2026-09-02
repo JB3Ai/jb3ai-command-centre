@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lead, LeadMessage, LeadStatus } from '../../types/inbound';
+import type { Lead, LeadStatus, LeadMessage } from '../../types/inbound';
 import { 
   X, 
   Sparkles, 
@@ -17,10 +17,9 @@ import {
   Zap,
   CheckCircle2,
   History,
-  ArrowRight,
-  User
+  ArrowRight
 } from 'lucide-react';
-import { formatStatusBadge, getSourceBadgeColor, getSourceIcon, formatDate } from './utils';
+import { formatStatusBadge, getSourceIcon, formatDate } from './utils';
 
 interface LeadDetailModalProps {
   lead: Lead | null;

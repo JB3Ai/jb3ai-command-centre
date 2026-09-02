@@ -13,7 +13,7 @@ import {
   Mail,
   Zap
 } from 'lucide-react';
-import { User } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 
 interface HeaderProps {
   activeTab: 'board' | 'inbox' | 'templates' | 'contacts' | 'campaigns';

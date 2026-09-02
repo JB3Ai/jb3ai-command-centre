@@ -1,4 +1,4 @@
-import { Lead, LeadMessage, SheetSyncLog, AgentConfig } from '../../../types/inbound';
+import type { Lead, LeadMessage, SheetSyncLog, AgentConfig } from '../../../types/inbound';
 
 export const INITIAL_AGENTS: AgentConfig[] = [
   {

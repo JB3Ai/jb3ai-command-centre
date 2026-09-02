@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SheetSyncLog, Lead } from '../../types/inbound';
+import type { SheetSyncLog, Lead } from '../../types/inbound';
 import { GOOGLE_APPS_SCRIPT_CODE } from './data/mockData';
 import { GoogleSheetsConnectBar } from './GoogleSheetsConnectBar';
 import { 
@@ -10,12 +10,8 @@ import {
   Clock, 
   Database, 
   CheckCircle2, 
-  ExternalLink,
-  ChevronRight,
-  ShieldCheck,
   Zap,
-  RefreshCw,
-  Power
+  RefreshCw
 } from 'lucide-react';
 import { formatDate } from './utils';
 

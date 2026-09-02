@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Navbar } from './Navbar';
 import { MetricsOverview } from './MetricsOverview';
 import { PipelineTable } from './PipelineTable';
@@ -13,7 +13,7 @@ import { CreateLeadModal } from './CreateLeadModal';
 import { ChannelSetupPage } from './ChannelSetupPage';
 import { GoogleSheetsConnectBar } from './GoogleSheetsConnectBar';
 
-import { 
+import type { 
   Lead, 
   LeadMessage, 
   SheetSyncLog, 
@@ -27,8 +27,8 @@ import {
   INITIAL_AGENTS,
   INITIAL_CALENDAR_EVENTS
 } from './data/mockData';
-import { GoogleCalendarEvent } from './lib/googleCalendar';
-import { SyncDiscrepancy } from './lib/syncAudit';
+import type { GoogleCalendarEvent } from './lib/googleCalendar';
+import type { SyncDiscrepancy } from './lib/syncAudit';
 import { getAccessToken } from './lib/googleAuth';
 
 export function InboundView() {
@@ -39,7 +39,6 @@ export function InboundView() {
   const [messages, setMessages] = useState<LeadMessage[]>(INITIAL_MESSAGES);
   const [syncLogs, setSyncLogs] = useState<SheetSyncLog[]>(INITIAL_SYNC_LOGS);
   const [agents, setAgents] = useState<AgentConfig[]>(INITIAL_AGENTS);
-  const [calendarEvents, setCalendarEvents] = useState<GoogleCalendarEvent[]>(INITIAL_CALENDAR_EVENTS);
 
   // Selected lead & modal states
   const [selectedLeadForDetail, setSelectedLeadForDetail] = useState<Lead | null>(null);
@@ -488,7 +487,6 @@ export function InboundView() {
           <GoogleCalendarPanel
             leads={leads}
             calendarEvents={calendarEvents}
-            onUpdateCalendarEvents={setCalendarEvents}
             onUpdateLeadStatus={(leadId, status, callDate, callTime) => {
               handleStatusChange(leadId, status);
               if (callDate || callTime) {

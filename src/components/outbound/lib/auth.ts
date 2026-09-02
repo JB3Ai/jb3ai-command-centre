@@ -6,7 +6,7 @@ import {
   GoogleAuthProvider, 
   onAuthStateChanged, 
   signOut,
-  User 
+  type User 
 } from 'firebase/auth';
 
 // Fallback Firebase config to prevent crashes when API keys are missing

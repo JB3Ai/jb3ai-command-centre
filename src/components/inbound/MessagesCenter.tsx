@@ -1,19 +1,11 @@
 import React, { useState } from 'react';
-import { Lead, LeadMessage, LeadStatus } from '../../types/inbound';
+import type { Lead, LeadMessage, LeadStatus } from '../../types/inbound';
 import { 
   MessageSquare, 
   Send, 
   Sparkles, 
   Phone, 
-  Mail, 
-  Calendar, 
-  CheckCircle2, 
-  User, 
-  Bot, 
-  RefreshCw,
-  Zap,
-  Clock,
-  ExternalLink
+  Mail
 } from 'lucide-react';
 import { getSourceBadgeColor, getSourceIcon, formatStatusBadge, formatDate } from './utils';
 

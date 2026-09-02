@@ -1,5 +1,5 @@
-import { Lead, LeadStatus } from '../../../types/inbound';
-import { GoogleCalendarEvent } from './googleCalendar';
+import type { Lead, LeadStatus } from '../../../types/inbound';
+import type { GoogleCalendarEvent } from './googleCalendar';
 
 export interface SyncDiscrepancy {
   id: string;

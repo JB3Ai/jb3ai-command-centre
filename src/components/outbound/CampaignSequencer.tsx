@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Campaign, QueueItem, Contact, Thread } from '../../types/outbound';
+import type { Campaign, QueueItem, Contact, Thread } from '../../types/outbound';
 import { 
   Sliders, 
   Play, 

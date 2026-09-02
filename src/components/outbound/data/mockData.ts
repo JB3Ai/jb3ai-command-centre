@@ -1,4 +1,4 @@
-import { Contact, Template, Campaign, Thread } from '../../../types/outbound';
+import type { Contact, Template, Campaign, Thread } from '../../../types/outbound';
 
 export const initialContacts: Contact[] = [
   {

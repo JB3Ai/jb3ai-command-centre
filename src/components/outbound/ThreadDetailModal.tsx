@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Contact, Thread, Template, ThreadStatus } from '../../types/outbound';
+import type { Contact, Thread, Template, ThreadStatus } from '../../types/outbound';
 import { 
   X, 
   Send, 

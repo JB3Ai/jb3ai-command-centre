@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Contact, Thread, Template, Sentiment } from '../../types/outbound';
+import type { Contact, Thread, Template, Sentiment } from '../../types/outbound';
 import { 
   Inbox, 
   Send, 
   Sparkles, 
-  MessageSquare, 
   Calendar, 
   CheckCircle2, 
   Smile, 
@@ -12,7 +11,6 @@ import {
   Frown, 
   Clock, 
   Mail,
-  User,
   Zap,
   XCircle,
   CornerUpRight,

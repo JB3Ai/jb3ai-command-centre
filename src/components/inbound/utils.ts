@@ -1,4 +1,4 @@
-import { LeadStatus, OriginSource } from '../../types/inbound';
+import type { LeadStatus, OriginSource } from '../../types/inbound';
 
 export function formatStatusBadge(status: LeadStatus | string) {
   switch (status) {

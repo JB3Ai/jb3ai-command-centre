@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Template, TemplateCategory, TemplateTone } from '../../types/outbound';
+import type { Template, TemplateCategory, TemplateTone } from '../../types/outbound';
 import { 
   FileText, 
   Plus, 

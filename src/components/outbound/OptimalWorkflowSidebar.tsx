@@ -1,5 +1,5 @@
 import React from 'react';
-import { Contact, Thread, Template } from '../../types/outbound';
+import type { Contact, Thread, Template } from '../../types/outbound';
 import { 
   Sparkles, 
   Send, 

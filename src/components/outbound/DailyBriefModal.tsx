@@ -1,5 +1,5 @@
 import React from 'react';
-import { Thread, Contact, DailyBrief } from '../../types/outbound';
+import type { Thread } from '../../types/outbound';
 import { 
   X, 
   Sparkles, 

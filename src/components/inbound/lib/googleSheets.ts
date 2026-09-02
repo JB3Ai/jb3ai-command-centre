@@ -1,4 +1,4 @@
-import { Lead } from '../../../types/inbound';
+import type { Lead } from '../../../types/inbound';
 
 export interface GoogleSpreadsheetItem {
   id: string;

@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
-import { OriginSource } from '../../types/inbound';
+import type { OriginSource } from '../../types/inbound';
 import { 
-  Send, 
   Globe, 
-  MessageSquare, 
-  Phone, 
-  Mail, 
-  Sparkles, 
   CheckCircle2, 
   RefreshCw, 
   Code2, 

@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
-import { Template, TemplateCategory, TemplateTone } from '../../types/outbound';
+import type { Template, TemplateCategory, TemplateTone } from '../../types/outbound';
 import { 
   FileText, 
   Plus, 
-  Code, 
-  Eye, 
   Sparkles, 
-  Edit3, 
-  Trash2, 
   Check, 
-  Tag, 
-  Sliders 
 } from 'lucide-react';
 
 interface TemplateManagerProps {
@@ -22,7 +16,6 @@ interface TemplateManagerProps {
 export const TemplateManager: React.FC<TemplateManagerProps> = ({
   templates,
   onSaveTemplate,
-  onDeleteTemplate,
 }) => {
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(
     templates.length > 0 ? templates[0].id : ''

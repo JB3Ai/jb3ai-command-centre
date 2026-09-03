@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { User } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 import { googleSignIn, initAuth } from './lib/googleAuth';
 import { 
   sendGmailMessage, 
-  listRecentGmailMessages, 
-  GmailMessageSummary 
+  listRecentGmailMessages,
+  type GmailMessageSummary
 } from './lib/googleGmail';
-import { Lead, LeadMessage } from '../../types/inbound';
+import type { Lead, LeadMessage } from '../../types/inbound';
 import { 
   Mail, 
   Send, 
-  User as UserIcon, 
   CheckCircle2, 
   AlertCircle, 
   RefreshCw, 
-  FileText, 
   Sparkles,
   Inbox,
-  Zap,
-  Bot
+  Zap
 } from 'lucide-react';
 
 interface GmailPanelProps {

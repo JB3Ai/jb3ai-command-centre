@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { User } from 'firebase/auth';
-import { 
-  Contact, 
-  Template, 
-  Campaign, 
-  Thread, 
-  QueueItem, 
-  ThreadStatus, 
-  SuggestedActionType 
+import { useState, useEffect } from 'react';
+import type { User } from 'firebase/auth';
+import type {
+  Contact,
+  Template,
+  Campaign,
+  Thread,
+  QueueItem,
+  ThreadStatus,
+  SuggestedActionType
 } from '../../types/outbound';
 import { 
   initialContacts, 
@@ -18,8 +18,7 @@ import {
 import { 
   initAuth, 
   googleSignIn, 
-  logout, 
-  getAccessToken 
+  logout
 } from './lib/auth';
 import { 
   sendGmailEmail, 
@@ -57,7 +56,7 @@ export function OutboundView() {
     return saved ? JSON.parse(saved) : initialThreads;
   });
 
-  const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
+  const [queueItems] = useState<QueueItem[]>([]);
 
   // Auth & Gmail API State
   const [user, setUser] = useState<User | null>(null);
@@ -104,7 +103,7 @@ export function OutboundView() {
   // Auth initialization
   useEffect(() => {
     initAuth(
-      (u, token) => {
+      (u: User, token: string) => {
         setUser(u);
         setAccessToken(token);
       },
@@ -124,7 +123,7 @@ export function OutboundView() {
         setAccessToken(res.accessToken);
         handleSyncInbox(res.accessToken);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Google Auth Failed:', err);
     }
   };

@@ -1,13 +1,10 @@
 import React from 'react';
-import { Contact, Thread, Template } from '../../types/outbound';
+import type { Contact, Thread, Template } from '../../types/outbound';
 import { 
   Sparkles, 
   Send, 
   Clock, 
-  Check, 
   XCircle, 
-  ArrowRight, 
-  AlertCircle, 
   Calendar, 
   CheckCircle2 
 } from 'lucide-react';

@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
-import { AgentConfig, Lead } from '../../types/inbound';
+import type { AgentConfig, Lead } from '../../types/inbound';
 import { 
   Bot, 
   Sparkles, 
   Zap, 
-  Play, 
   Settings, 
   CheckCircle2, 
-  RefreshCw, 
-  ShieldAlert, 
-  FileCode, 
-  Search, 
   Send 
 } from 'lucide-react';
 
@@ -30,7 +25,7 @@ export const AgentsControlPanel: React.FC<AgentsControlPanelProps> = ({
   isLoadingAgent = false
 }) => {
   const [selectedLeadId, setSelectedLeadId] = useState<string>(leads[0]?.id || '');
-  const [testOutput, setTestOutput] = useState<string>('');
+  const [_testOutput, setTestOutput] = useState<string>('');
   const [editingPrompts, setEditingPrompts] = useState<Record<string, string>>(() => {
     const map: Record<string, string> = {};
     agents.forEach(a => { map[a.agent_id] = a.system_prompt; });

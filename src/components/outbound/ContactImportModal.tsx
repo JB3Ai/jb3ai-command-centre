@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { Contact, Tag, Priority } from '../../types/outbound';
+import type { Contact, Tag, Priority } from '../../types/outbound';
 import { 
   X, 
   Upload, 
   FileSpreadsheet, 
   Clipboard, 
   UserPlus, 
+  FileText,
   AlertTriangle, 
   CheckCircle, 
   Sparkles,
   Link as LinkIcon,
-  RefreshCw,
-  FileText
+  RefreshCw
 } from 'lucide-react';
 
 interface ContactImportModalProps {
@@ -25,7 +25,6 @@ interface ContactImportModalProps {
 export const ContactImportModal: React.FC<ContactImportModalProps> = ({
   isOpen,
   onClose,
-  existingContacts,
   onImportContacts,
   accessToken,
 }) => {
@@ -45,7 +44,7 @@ export const ContactImportModal: React.FC<ContactImportModalProps> = ({
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
   const [program, setProgram] = useState('');
-  const [source, setSource] = useState('Research');
+  const [source] = useState('Research');
   const [priority, setPriority] = useState<Priority>(4);
   const [selectedTag, setSelectedTag] = useState<Tag>('corporate');
   const [customLanguage, setCustomLanguage] = useState('');

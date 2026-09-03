@@ -1,31 +1,19 @@
 import React, { useState } from 'react';
-import { Lead, OriginSource, LeadMessage, SheetSyncLog } from '../../types/inbound';
+import type { Lead, OriginSource } from '../../types/inbound';
 import { 
   Radio, 
-  Zap, 
   CheckCircle2, 
-  AlertTriangle, 
-  XCircle, 
   Copy, 
   Check, 
   Send, 
-  RefreshCw, 
-  ShieldCheck, 
   Sliders, 
-  Globe, 
-  MessageSquare, 
-  Mail, 
-  Phone, 
-  FileSpreadsheet, 
-  ExternalLink, 
-  Bot, 
-  Key, 
+  FileSpreadsheet,
+  Key,
   ArrowRight,
-  Code2,
-  Activity,
-  Sparkles
+  Sparkles,
+  MessageSquare
 } from 'lucide-react';
-import { getSourceBadgeColor, getSourceIcon, formatDate } from './utils';
+import { getSourceIcon } from './utils';
 
 export interface ChannelConfig {
   id: OriginSource | 'GoogleSheets';
@@ -188,7 +176,7 @@ export const ChannelSetupPage: React.FC<ChannelSetupPageProps> = ({
   leads,
   onTriggerWebhook,
   onLogSync,
-  onOpenMessages,
+  // onOpenMessages,
   onNavigateToTab
 }) => {
   const [channels, setChannels] = useState<ChannelConfig[]>(INITIAL_CHANNELS);
@@ -201,7 +189,7 @@ export const ChannelSetupPage: React.FC<ChannelSetupPageProps> = ({
   const [testPhone, setTestPhone] = useState('+27839994411');
   const [testAccessType, setTestAccessType] = useState('Investor Access');
   const [testMessage, setTestMessage] = useState('Hi Jonathan, we would like to explore integrating JB3AI lead automation with our investment portfolio.');
-  const [customJsonPayload, setCustomJsonPayload] = useState('');
+  const [_customJsonPayload, _setCustomJsonPayload] = useState('');
   const [isSendingTest, setIsSendingTest] = useState(false);
   const [testResponseResult, setTestResponseResult] = useState<{
     status: number;
@@ -235,20 +223,7 @@ export const ChannelSetupPage: React.FC<ChannelSetupPageProps> = ({
     );
   };
 
-  const handleToggleAutoResponse = (channelId: string) => {
-    setChannels(prev =>
-      prev.map(c => {
-        if (c.id === channelId) {
-          const next = !c.autoResponseEnabled;
-          if (onLogSync) {
-            onLogSync('AUTO_RESPONSE_TOGGLE', `Auto-Response for "${c.name}" set to ${next ? 'ENABLED' : 'DISABLED'}`);
-          }
-          return { ...c, autoResponseEnabled: next };
-        }
-        return c;
-      })
-    );
-  };
+
 
   const handleSelectChannelTemplate = (channelId: OriginSource | 'GoogleSheets') => {
     setSelectedChannelId(channelId);
@@ -324,9 +299,9 @@ export const ChannelSetupPage: React.FC<ChannelSetupPageProps> = ({
       timestamp: new Date().toISOString()
     };
 
-    if (customJsonPayload.trim()) {
+    if (_customJsonPayload.trim()) {
       try {
-        payload = JSON.parse(customJsonPayload);
+        payload = JSON.parse(_customJsonPayload);
       } catch (err) {
         alert("Invalid custom JSON format. Using standard form payload instead.");
       }

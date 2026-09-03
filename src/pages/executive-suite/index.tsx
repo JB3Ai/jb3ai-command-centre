@@ -7,7 +7,7 @@ import { OutboundView } from "@/components/outbound/OutboundView";
 export function ExecutiveSuitePage() {
   const [activeTab, setActiveTab] = useState<"inbound" | "outbound">("inbound");
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { session, signOut } = useAuth();
+  const { signOut } = useAuth();
 
   const handleRefresh = () => {
     setIsRefreshing(true);

@@ -1,20 +1,13 @@
 import React, { useState } from 'react';
-import { Contact, Thread, Template, ThreadStatus } from '../../types/outbound';
+import type { Contact, Thread, Template, ThreadStatus } from '../../types/outbound';
 import { 
   X, 
   Send, 
   Clock, 
-  User, 
-  Building, 
   Mail, 
-  Tag, 
-  Calendar, 
   Sparkles, 
-  CheckCircle2, 
-  ArrowRight,
   ArrowUpRight,
   ArrowDownLeft,
-  Inbox,
   ShieldCheck,
   MessageSquare
 } from 'lucide-react';

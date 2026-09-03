@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { User } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 import { googleSignIn, initAuth } from './lib/googleAuth';
 import { 
   createGoogleCalendarEvent, 
   listGoogleCalendarEvents, 
   deleteGoogleCalendarEvent, 
-  GoogleCalendarEvent 
+  type GoogleCalendarEvent 
 } from './lib/googleCalendar';
-import { Lead } from '../../types/inbound';
-import { auditBidirectionalSync, SyncDiscrepancy } from './lib/syncAudit';
+import type { Lead } from '../../types/inbound';
+import { auditBidirectionalSync } from './lib/syncAudit';
+import type { SyncDiscrepancy } from './lib/syncAudit';
 import { INITIAL_CALENDAR_EVENTS } from './data/mockData';
 import { 
   Calendar, 
   Clock, 
   Plus, 
   User as UserIcon, 
-  ExternalLink, 
   Trash2, 
   RefreshCw, 
   CheckCircle2, 
@@ -23,15 +23,12 @@ import {
   AlertTriangle,
   ShieldAlert,
   Wrench,
-  Video,
-  Send,
-  Building
+  ExternalLink
 } from 'lucide-react';
 
 interface GoogleCalendarPanelProps {
   leads: Lead[];
   calendarEvents?: GoogleCalendarEvent[];
-  onUpdateCalendarEvents?: (events: GoogleCalendarEvent[]) => void;
   onUpdateLeadStatus?: (leadId: string, status: any, callDate?: string, callTime?: string) => void;
   onLogSync?: (action: string, details: string) => void;
   onResolveDiscrepancy?: (discrepancy: SyncDiscrepancy, action: 'UPDATE_STATUS' | 'RESET_STATUS' | 'SYNC_TIME') => void;
@@ -40,7 +37,6 @@ interface GoogleCalendarPanelProps {
 export const GoogleCalendarPanel: React.FC<GoogleCalendarPanelProps> = ({
   leads,
   calendarEvents,
-  onUpdateCalendarEvents,
   onUpdateLeadStatus,
   onLogSync,
   onResolveDiscrepancy
@@ -149,7 +145,7 @@ export const GoogleCalendarPanel: React.FC<GoogleCalendarPanelProps> = ({
       const endTimeObj = new Date(new Date(`${eventDate}T${eventTime}:00`).getTime() + durationMinutes * 60000);
       const endISO = endTimeObj.toISOString();
 
-      const created = await createGoogleCalendarEvent(accessToken, {
+      await createGoogleCalendarEvent(accessToken, {
         summary,
         description,
         location,

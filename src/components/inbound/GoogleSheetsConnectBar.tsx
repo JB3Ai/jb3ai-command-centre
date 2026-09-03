@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 import { 
   googleSignIn, 
   googleLogout, 
@@ -10,9 +10,9 @@ import {
   exportLeadsToGoogleSheet, 
   importLeadsFromGoogleSheet, 
   listUserGoogleSheets, 
-  GoogleSpreadsheetItem 
+  type GoogleSpreadsheetItem 
 } from './lib/googleSheets';
-import { Lead } from '../../types/inbound';
+import type { Lead } from '../../types/inbound';
 import { 
   FileSpreadsheet, 
   LogOut, 

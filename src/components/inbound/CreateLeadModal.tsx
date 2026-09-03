@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Lead, OriginSource, AccessType } from '../../types/inbound';
-import { X, Plus, User, Mail, Phone, Globe, ShieldCheck } from 'lucide-react';
+import type { Lead, OriginSource } from '../../types/inbound';
+import { X, Plus } from 'lucide-react';
 
 interface CreateLeadModalProps {
   isOpen: boolean;

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Lead } from '../../types/inbound';
+import type { Lead } from '../../types/inbound';
 import { 
   Users, 
   Search, 
@@ -8,8 +8,7 @@ import {
   TrendingUp, 
   Sparkles,
   ArrowUpRight,
-  LineChart as LineChartIcon,
-  BarChart2
+  LineChart as LineChartIcon
 } from 'lucide-react';
 import { getSourceIcon } from './utils';
 import {
@@ -391,4 +390,3 @@ export const MetricsOverview: React.FC<MetricsOverviewProps> = ({
     </div>
   );
 };
-

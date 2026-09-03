@@ -1,4 +1,4 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import type { FirebaseOptions } from 'firebase/app';
 import { 
   getAuth, 
@@ -6,7 +6,7 @@ import {
   GoogleAuthProvider, 
   onAuthStateChanged, 
   signOut, 
-  User 
+  type User 
 } from 'firebase/auth';
 
 // Fallback Firebase config to prevent crashes when API keys are missing

@@ -6,6 +6,7 @@ import {
   FileSpreadsheet, 
   Clipboard, 
   UserPlus, 
+  FileText,
   AlertTriangle, 
   CheckCircle, 
   Sparkles,

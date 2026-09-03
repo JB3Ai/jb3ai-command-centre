@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, AlertTriangle, Send, CheckCircle2, X } from 'lucide-react';
+import { Mail, Send, X } from 'lucide-react';
 
 interface SendConfirmationModalProps {
   isOpen: boolean;

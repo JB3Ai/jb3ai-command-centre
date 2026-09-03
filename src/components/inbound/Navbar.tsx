@@ -12,8 +12,7 @@ import {
   Globe,
   Calendar,
   Mail,
-  Radio,
-  Sliders
+  Radio
 } from 'lucide-react';
 
 interface NavbarProps {

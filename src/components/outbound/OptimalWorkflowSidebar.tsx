@@ -4,10 +4,7 @@ import {
   Sparkles, 
   Send, 
   Clock, 
-  Check, 
   XCircle, 
-  ArrowRight, 
-  AlertCircle, 
   Calendar, 
   CheckCircle2 
 } from 'lucide-react';

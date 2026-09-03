@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import type { OriginSource } from '../../types/inbound';
 import { 
-  Send, 
   Globe, 
   CheckCircle2, 
   RefreshCw, 

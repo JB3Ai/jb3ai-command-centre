@@ -2,28 +2,12 @@ import React, { useState } from 'react';
 import type { 
   Contact, 
   Thread, 
-  ThreadStatus, 
-  Template,
-  SuggestedActionType 
+  ThreadStatus,
+  Template
 } from '../../types/outbound';
 import { 
-  Mail, 
-  Calendar, 
-  Send, 
-  CheckCircle, 
-  Eye, 
   Clock, 
-  MessageSquare, 
-  CheckCheck, 
-  XCircle, 
-  ChevronRight, 
-  MoreHorizontal, 
   Tag, 
-  Sparkles,
-  ArrowRight,
-  User,
-  Building,
-  ExternalLink,
   Plus
 } from 'lucide-react';
 
@@ -134,9 +118,7 @@ const COLUMNS: ColumnConfig[] = [
 export const TrafficLightBoard: React.FC<TrafficLightBoardProps> = ({
   threads,
   contacts,
-  templates,
   onUpdateThreadStatus,
-  onSendEmailNow,
   onOpenThreadDetail,
   onOpenImportModal,
 }) => {

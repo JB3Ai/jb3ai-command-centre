@@ -39,6 +39,7 @@ export function InboundView() {
   const [messages, setMessages] = useState<LeadMessage[]>(INITIAL_MESSAGES);
   const [syncLogs, setSyncLogs] = useState<SheetSyncLog[]>(INITIAL_SYNC_LOGS);
   const [agents, setAgents] = useState<AgentConfig[]>(INITIAL_AGENTS);
+  const [calendarEvents] = useState<GoogleCalendarEvent[]>(INITIAL_CALENDAR_EVENTS);
 
   // Selected lead & modal states
   const [selectedLeadForDetail, setSelectedLeadForDetail] = useState<Lead | null>(null);

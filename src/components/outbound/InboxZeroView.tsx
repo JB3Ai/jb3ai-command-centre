@@ -9,8 +9,6 @@ import {
   Smile, 
   Meh, 
   Frown, 
-  Clock, 
-  Mail,
   Zap,
   XCircle,
   CornerUpRight,

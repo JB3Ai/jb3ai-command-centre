@@ -10,6 +10,7 @@ import {
   Phone, 
   Mail, 
   FileText, 
+  User,
   Copy, 
   Check, 
   Send,

@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-import type { Contact, Tag, Priority } from '../../types/outbound';
+import type { Contact, Tag } from '../../types/outbound';
 import { 
   Users, 
   Search, 
   Plus, 
   Trash2, 
-  Tag as TagIcon, 
-  ExternalLink, 
-  Mail, 
-  Globe 
+  Tag as TagIcon
 } from 'lucide-react';
 
 interface ContactManagerProps {

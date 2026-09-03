@@ -12,7 +12,6 @@ import type { ReactNode } from "react";
 export function ProtectedRoute({ children }: { children: ReactNode }) {
   const { session, loading } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
 
   if (loading) {
     return (

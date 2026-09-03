@@ -4,6 +4,9 @@ import {
   MessageSquare, 
   Send, 
   Sparkles, 
+  Bot,
+  User,
+  RefreshCw,
   Phone, 
   Mail
 } from 'lucide-react';

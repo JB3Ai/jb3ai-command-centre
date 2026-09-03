@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import type { Lead, LeadStatus, OriginSource } from '../../types/inbound';
+import type { Lead, LeadStatus } from '../../types/inbound';
 import type { GoogleCalendarEvent } from './lib/googleCalendar';
 import type { SyncDiscrepancy } from './lib/syncAudit';
+import { auditBidirectionalSync } from './lib/syncAudit';
 import { 
   Search, 
   Sparkles, 
@@ -9,7 +10,6 @@ import {
   Eye, 
   Trash2, 
   CheckCircle2, 
-  ChevronRight, 
   Plus,
   RefreshCw,
   ShieldCheck,

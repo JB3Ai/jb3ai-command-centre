@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Thread } from '../../types/outbound';
+import type { Thread, Contact } from '../../types/outbound';
 import { 
   X, 
   Sparkles, 
@@ -7,10 +7,7 @@ import {
   Clock, 
   UserCheck, 
   Send, 
-  CheckCircle2, 
-  ArrowRight,
-  TrendingUp,
-  Calendar
+  TrendingUp
 } from 'lucide-react';
 
 interface DailyBriefModalProps {

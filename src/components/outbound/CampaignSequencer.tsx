@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import type { Campaign, QueueItem, Contact, Thread } from '../../types/outbound';
 import { 
-  Sliders, 
   Play, 
   Pause, 
   Clock, 
   ShieldCheck, 
   Zap, 
-  CheckCircle2, 
-  AlertCircle, 
   ListOrdered 
 } from 'lucide-react';
 
@@ -26,7 +23,6 @@ export const CampaignSequencer: React.FC<CampaignSequencerProps> = ({
   campaign,
   threads,
   contacts,
-  queueItems,
   onToggleCampaignStatus,
   onUpdateThrottle,
   onProcessQueueStep,

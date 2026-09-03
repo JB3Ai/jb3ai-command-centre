@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import type { User } from 'firebase/auth';
 import type {
   Contact,
@@ -18,8 +18,7 @@ import {
 import { 
   initAuth, 
   googleSignIn, 
-  logout, 
-  getAccessToken 
+  logout
 } from './lib/auth';
 import { 
   sendGmailEmail, 
@@ -57,7 +56,7 @@ export function OutboundView() {
     return saved ? JSON.parse(saved) : initialThreads;
   });
 
-  const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
+  const [queueItems] = useState<QueueItem[]>([]);
 
   // Auth & Gmail API State
   const [user, setUser] = useState<User | null>(null);

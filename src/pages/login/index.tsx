@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
 import { Mail, Loader2, CheckCircle2, AlertTriangle, Lock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -21,17 +21,13 @@ type LoginState =
  */
 export default function LoginPage() {
   const { session, loading } = useAuth();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => {
+    const allowedEmails = getAllowedEmails();
+    return allowedEmails.length === 1 ? allowedEmails[0] : "";
+  });
   const [password, setPassword] = useState("");
   const [state, setState] = useState<LoginState>({ kind: "idle" });
   const allowed = getAllowedEmails();
-
-  // Pre-fill if there's only one allowed email
-  useEffect(() => {
-    if (allowed.length === 1) {
-      setEmail(allowed[0]);
-    }
-  }, [allowed]);
 
   if (loading) return <FullScreenSpinner />;
   if (session) return <Navigate to="/home" replace />;
